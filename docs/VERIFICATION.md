@@ -64,6 +64,10 @@ A 390-pixel local development frame was used to inspect the final receiving view
 
 The [overview](screenshots/overview.png), [extraction dialog](screenshots/textract.png), [supplier review](screenshots/supplier.png), and [mobile recovery dialog](screenshots/mobile-recovery.png) show inspected interface states. Do not interpret these targeted checks as a formal accessibility audit or broad device certification.
 
+## Published demo
+
+The [published YouTube demo](https://youtu.be/DAq-7V6UqVM) was checked on 20 September 2026 in a signed-out browser. Its page showed Unlisted visibility and 2:46 duration; playback started and the displayed content matched the edited synthetic demonstration. The local source is 166.023 seconds. [Rendering measurements](evidence/video-verification.json) record the actual-interaction capture and narration holds. This playback check does not establish real-user validation.
+
 ## Claims this evidence does not support
 
 - No completed real-shop/supplier trial, measured time saving, financial recovery, or adoption result. The [user trial protocol](USER-TRIAL.md) remains a protocol until observations are collected.

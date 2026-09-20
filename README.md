@@ -4,7 +4,7 @@
 
 ReceiveRight helps a small shop check packaged goods at delivery and give its supplier a specific discrepancy to review. The invoice, physical counts, photographs, calculation, and supplier response stay connected to the **same saved version**. Later edits preserve the earlier record and its responses.
 
-Built by **Bro code** for **First Commit - AWS x WeMakeDevs, September 2026**, Ship It track. [Open the deployed app](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) · [Two-page project brief](output/pdf/ReceiveRight-Submission-Brief.pdf) · [Submission answers](docs/SUBMISSION.md)
+Built by **Bro code** for **First Commit - AWS x WeMakeDevs, September 2026**, Ship It track. [Open the deployed app](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) · [Watch the 2:46 demo](https://youtu.be/DAq-7V6UqVM) · [Two-page project brief](output/pdf/ReceiveRight-Submission-Brief.pdf) · [Submission answers](docs/SUBMISSION.md)
 
 ![ReceiveRight receiving workspace](docs/screenshots/overview.png)
 
@@ -50,7 +50,7 @@ A live AWS smoke run verified recovery and renewal, the supplier workflow, retai
 
 We also submitted **five generated invoice images** through the deployed API and real Textract. It returned **12 of 13 printed rows**. Three fixtures matched all four scored fields on every row; an intentionally incomplete invoice lost an entire row, and two units were unknown in the Indian-price fixture. That failure matters: a person must compare the full invoice with the suggested list and add omitted items. The [evaluation report](docs/INVOICE-EVALUATION.md), [raw measured results](docs/evidence/invoice-evaluation.json), [images and ground truth](public/evaluation/expected.json), and [generator](scripts/generate-evaluation-corpus.py) are public. This tiny synthetic set is not a representative accuracy benchmark.
 
-The **2:46 demo is finished locally**, using actual recorded app interactions with disclosed still-frame narration holds, synthetic data, and generated narration. YouTube publication is pending account sign-in; [video publishing details](docs/VIDEO-PUBLISHING.md) record its status. A [shop/supplier trial protocol](docs/USER-TRIAL.md) and [team learning worksheet](docs/TEAM-LEARNING.md) are prepared; uncompleted trials and teammate contributions are not claimed.
+The [**2:46 demo is available on YouTube**](https://youtu.be/DAq-7V6UqVM), using actual recorded app interactions with disclosed still-frame narration holds, synthetic data, and generated narration. Its unlisted page and playback were verified while signed out; [publication details](docs/VIDEO-PUBLISHING.md) record the check. A [shop/supplier trial protocol](docs/USER-TRIAL.md) and [team learning worksheet](docs/TEAM-LEARNING.md) are prepared; uncompleted trials and teammate contributions are not claimed.
 
 ## AWS architecture and cost
 

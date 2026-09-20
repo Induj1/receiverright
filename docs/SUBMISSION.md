@@ -36,7 +36,9 @@ The deployed receiver/supplier lifecycle, private S3 evidence and real Textract 
 
 ## YouTube video demo link
 
-**TODO: public or unlisted YouTube video URL.** The finished local video is `output/video/ReceiveRight-Live-Demo.mp4` (2:46.023, 1080p), with captions in `ReceiveRight-Live-Demo.srt`. It contains recorded application interactions, edited with disclosed still-frame narration holds, synthetic data, and generated narration. It has not yet been uploaded. [Ready-to-paste title and description](VIDEO-PUBLISHING.md) are included.
+https://youtu.be/DAq-7V6UqVM
+
+Verified on 20 September 2026: the YouTube page opens and playback starts while signed out, is marked **Unlisted**, and displays **2:46**. The uploaded content matches the finished demo. It contains recorded application interactions with disclosed still-frame narration holds, synthetic data, and generated narration. The local source is `output/video/ReceiveRight-Live-Demo.mp4` (166.023 seconds); optional SRT captions are included in the kit. [Publication details](VIDEO-PUBLISHING.md).
 
 ## What does your project do?
 
@@ -101,10 +103,9 @@ This project used substantial OpenAI Codex assistance for implementation, tests,
 
 ## Final checks before copying into the event form
 
-- Replace all missing team identities and public resume URLs; remove mock labels from any submitted field.
-- Add the actual public GitHub, verified deployment, and public/unlisted YouTube links.
-- Verify the video duration and show real AWS execution rather than attributing the synthetic sample to AWS.
-- Match the AWS answer to the services that were actually deployed and exercised. Delete the optional Bedrock use claim if it was never enabled.
-- Update contribution statements with completed human work. Keep AI-assistance disclosure.
-- Leave optional blog/resume/member fields blank when no real link or contribution is available; do not submit placeholder URLs.
-- Do not add customer adoption, accuracy, savings, or award guarantees without evidence.
+- Leader identity and profiles are entered, and all four supplied WeMakeDevs usernames are recorded.
+- Public GitHub, deployed application, and verified unlisted YouTube links are entered. The video is under three minutes.
+- The AWS answer matches the deployed services; Bedrock is explicitly disabled.
+- Keep the factual leader contribution and AI-assistance disclosure. Add other members' contributions only when their actual work is supplied.
+- Leave unsupplied optional blog/resume/member fields blank; do not copy explanatory placeholders into the form.
+- Review and submit the event form. **The form itself has not been submitted.**

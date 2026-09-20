@@ -4,7 +4,7 @@ The finished local file is `output/video/ReceiveRight-Live-Demo.mp4`: **166.023 
 
 The video contains actual browser interactions with synthetic data and generated narration. Captured actions total about 11.84 seconds; the edit adds still-frame holds for explanation and omits pauses between separate captures. It is not an uninterrupted desktop recording. Original capture timestamps and endpoints were retained when 158 captures were sampled to 140 frames compatible with the output clock. Audio/video decoding, representative frames, caption bounds, duration, and audio levels were checked.
 
-**Publishing status: awaiting the user's YouTube sign-in for an authorized unlisted upload.**
+**Published by Induj:** [Watch the unlisted demo](https://youtu.be/DAq-7V6UqVM). Verified on 20 September 2026: the page opens and playback starts while signed out, the visibility label is Unlisted, and the player displays 2:46. The visible content matches the finished demo. YouTube closed captions were not yet available at verification; the optional SRT file is included in the kit.
 
 ## Suggested title
 
@@ -30,8 +30,8 @@ This recorded synthetic demonstration shows a real invoice upload and Textract r
 
 The video uses actual recorded app interactions with still-frame narration holds, synthetic documents, and generated Microsoft David narration. It is edited, not an uninterrupted screen recording. OpenAI Codex substantially assisted implementation, testing, deployment, documentation, and presentation.
 
-## After uploading
+## Publication record
 
-Use **Unlisted** visibility as authorized by Induj, and verify the finished link opens without signing into the channel. Confirm processing has completed, the correct video plays, and its duration remains under three minutes. Add the SRT captions if supported. Replace the YouTube TODO in `docs/SUBMISSION.md` and the README with the actual watch URL. A local MP4 path is not a YouTube submission link.
+Induj uploaded the video using his signed-in Edge session. The verified watch link has been added to the submission answers, README, PDF, and final kit. The local video is 166.023 seconds; YouTube displays 2:46. The SRT can be added through YouTube Studio as an optional accessibility improvement.
 
 Induj has confirmed he is the leader, with username `indujgupta`; his GitHub, LinkedIn, and public resume are recorded. Other members' unsupplied optional profile, resume, and contribution fields can remain blank. Optional blog fields stay blank unless actually published. The supplied Builder Center article is an unpublished draft. The event form has not been submitted.
