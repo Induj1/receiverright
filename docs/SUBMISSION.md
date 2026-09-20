@@ -34,7 +34,7 @@ The deployed receiver/supplier lifecycle, private S3 evidence and real Textract 
 
 ## YouTube video demo link
 
-**TODO: public or unlisted YouTube video URL.** The video must be at most three minutes. A 2:45 script is included in [DEMO-SCRIPT.md](DEMO-SCRIPT.md).
+**TODO: public or unlisted YouTube video URL.** The finished local video is `output/video/ReceiveRight-Demo.mp4` (2:45.08, 1080p), with captions in `ReceiveRight-Demo.srt`. It is a narrated walkthrough of actual application screenshots, labeled synthetic demo. It has not been uploaded. [Ready-to-paste title and description](VIDEO-PUBLISHING.md) and a [live recording script](DEMO-SCRIPT.md) are included.
 
 ## What does your project do?
 

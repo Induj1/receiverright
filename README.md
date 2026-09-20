@@ -14,8 +14,9 @@ Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted im
 | --- | --- |
 | Source repository | [github.com/Induj1/receiverright](https://github.com/Induj1/receiverright) |
 | Public deployment | [Open ReceiveRight](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) - live AWS workflow, private S3 evidence and Textract extraction verified. Summaries use deterministic templates. [Verification record](docs/VERIFICATION.md) |
-| Video demonstration | Narrated screenshot walkthrough prepared locally; public or unlisted YouTube URL pending. [Recording script](docs/DEMO-SCRIPT.md), [video renderer](docs/VIDEO-RENDERING.md) |
+| Video demonstration | Completed 2:45.08 narrated screenshot walkthrough (1080p), prepared locally; YouTube upload pending. [Publishing details](docs/VIDEO-PUBLISHING.md), [video renderer](docs/VIDEO-RENDERING.md) |
 | Submission answers | [Submission draft](docs/SUBMISSION.md) — replace clearly marked missing team details. |
+| Project PDF | [Two-page submission brief](output/pdf/ReceiveRight-Submission-Brief.pdf) |
 | API and types | [API contract](API-CONTRACT.md), [shared types](shared/types.ts) |
 
 ## Try the complete workflow
