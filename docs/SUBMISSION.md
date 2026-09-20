@@ -1,20 +1,20 @@
-# First Commit submission draft
+# First Commit submission reference
 
-This file maps to the event's submission form. **TODO fields must be completed or left blank where optional before submission.** Team: **Bro code**, four members. The latest team details confirm **Harshita Nagesh** as team leader. This file does not submit the form.
+This file maps to the event's submission form. **TODO fields must be completed or left blank where optional.** Team: **Bro code**, four members, led by **Harshita Nagesh**. The user-provided receipt shows **Submitted on 20 September 2026 at 7:28 pm**. This is a corrected reference copy; changes here do not edit the submitted event form.
 
 ## Team details
 
 | Form field | Team leader | Second member | Third member | Fourth member |
 | --- | --- | --- | --- | --- |
 | Name for internal reference | **Harshita Nagesh** | **Induj Gupta** | **Rayyan Shaikh** | **Laavanya Gupta** |
-| WeMakeDevs username | **hashh** | indujgupta | theclazer | laavanya_gupta |
+| WeMakeDevs username | **hashh** | induj | theclazer | laavanya_gupta |
 | GitHub | https://github.com/hash066 | https://github.com/Induj1 | Not supplied — leave blank | Not supplied — leave blank |
 | LinkedIn | https://www.linkedin.com/in/harshita-nagesh | https://linkedin.com/in/induj-gupta-35382752 | Not supplied — leave blank | Not supplied — leave blank |
 | Public resume | Not supplied — leave blank | [Induj's resume](https://drive.google.com/file/d/1cpC_WRSW6VHzSTqkjatfut-t2u2n2jg8/view?usp=sharing) | Not supplied — leave blank | Not supplied — leave blank |
 
 Resume URLs are needed for consideration for Amazon Fast Track Interviews. Do not publish a fabricated resume or a placeholder URL.
 
-Induj confirmed his username as `indujgupta`; his resume opened in the signed-out Google Drive viewer on 20 September 2026. Harshita's username `hashh` comes from the supplied roster, and her leadership and profile links were supplied in the latest correction. Her GitHub profile displays Harshita Nagesh and links to the supplied LinkedIn profile. The GitHub link is normalized to the profile URL without date filters. Each profile and resume belongs only to the person in its column.
+Induj's [WeMakeDevs profile](https://www.wemakedevs.org/induj) displays **INDUJ GUPTA (@induj)**, confirming `induj` as his username. The submitted receipt used a different value in the second-member field; correcting that field in the event form remains unverified. His resume opened in the signed-out Google Drive viewer on 20 September 2026. Harshita's username `hashh` comes from the supplied roster, and her leadership and profile links were supplied in the latest correction. Her GitHub profile displays Harshita Nagesh and links to the supplied LinkedIn profile. The GitHub link is normalized to the profile URL without date filters. Each profile and resume belongs only to the person in its column.
 
 ## Project title
 
@@ -103,7 +103,7 @@ Lambda and API Gateway fit this application's short request/response workflow an
 
 This project used substantial OpenAI Codex assistance for implementation, tests, interface work, documentation, and review. The application also contains an optional Amazon Bedrock summary feature. Coding assistance and runtime AI are separate and are disclosed separately. The team must review the generated work and describe only verification and contributions that actually occurred.
 
-## Final checks before copying into the event form
+## Checks for the submitted form
 
 - Leader identity and profiles are entered, and all four supplied WeMakeDevs usernames are recorded.
 - Public GitHub, deployed application, and verified unlisted YouTube links are entered. The video is under three minutes.
@@ -111,4 +111,4 @@ This project used substantial OpenAI Codex assistance for implementation, tests,
 - The AWS answer matches the deployed services; Bedrock is explicitly disabled.
 - Harshita's confirmed role is team lead. Keep Induj's factual contribution under his own entry and retain the AI-assistance disclosure. Add other deliverables only when actual work is supplied.
 - Leave unsupplied optional blog/resume/member fields blank; do not copy explanatory placeholders into the form.
-- Review and submit the event form. **The form itself has not been submitted.**
+- The receipt shows the form was submitted. Edit **Second team member's WeMakeDevs username** to `induj`, save the change, and confirm the revised receipt. This local correction has not been applied to the event form by the assistant.

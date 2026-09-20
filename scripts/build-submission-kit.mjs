@@ -42,7 +42,7 @@ ${watchUrl?'YouTube: '+watchUrl:'The video is finished locally. An authorized un
 
 The published YouTube description still needs its leader sentence changed to **Team leader: Harshita Nagesh.** The prepared description in docs/VIDEO-PUBLISHING.md is corrected; Induj remains the uploader.
 
-Harshita's leader username, GitHub, and LinkedIn are entered; her confirmed contribution is her team-lead role. Induj's profiles, resume, and implementation/deployment contribution remain under his own member entry. All four supplied WeMakeDevs usernames are recorded. Unsupplied optional profile/resume/contribution fields should remain blank until real information is provided. The event form has **not** been submitted. Do not copy explanatory placeholders into form fields.
+Harshita's leader username, GitHub, and LinkedIn are entered; her confirmed contribution is her team-lead role. Induj's profiles, resume, and implementation/deployment contribution remain under his own member entry. His verified WeMakeDevs username is **induj**, as shown at https://www.wemakedevs.org/induj. Unsupplied optional fields should remain blank until verified information is provided. The user-provided event receipt shows **Submitted on 20 September 2026 at 7:28 pm**. These corrected local files do not update the submitted form: change the second member's username to **induj** there and save. That external correction has not been verified. Do not copy explanatory placeholders into form fields.
 
 ## Verified state
 
@@ -76,7 +76,7 @@ for(const [source,destination] of files){
 const included=['START-HERE.md',...files.map(([,destination])=>destination)];
 const hashes=[];
 for(const name of included){const bytes=await readFile(path.join(output,name));hashes.push({file:name,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});}
-await writeFile(path.join(output,'MANIFEST.json'),JSON.stringify({createdAt:new Date().toISOString(),youtubeUrl:watchUrl||null,formSubmitted:false,files:hashes},null,2)+'\n');
+await writeFile(path.join(output,'MANIFEST.json'),JSON.stringify({createdAt:new Date().toISOString(),youtubeUrl:watchUrl||null,formSubmitted:true,submissionStatusSource:'User-provided receipt: 20 September 2026, 7:28 pm',submittedUsernameCorrectionVerified:false,files:hashes},null,2)+'\n');
 const zipPath=path.join(root,'output/ReceiveRight-Submission-Kit.zip');
 await new Promise((resolve,reject)=>{
   const stream=createWriteStream(zipPath);
