@@ -4,7 +4,7 @@ Verified on **20 September 2026**. Software tests, live integrations, targeted b
 
 ## Automated software checks
 
-- **102 tests passed:** 27 domain, 58 extraction-parser, 9 API, and 8 workspace/history tests.
+- **103 tests passed:** 27 domain, 59 extraction-parser, 9 API, and 8 workspace/history tests.
 - Domain tests cover missing versus zero values, whole-unit counts, unknown units, pack conversion, final-line paise rounding, impossible allocations, excess with defects, and overflow.
 - Parser tests use fabricated provider responses. They cover numeric ambiguity, explicit/unknown units, conflicting fields, confidence handling, dates, multiple invoices, foreign currency, missing descriptions, and the 100-row limit. They are not OCR accuracy tests.
 - API tests cover the receiver/supplier lifecycle, workspace/evidence scope, stale revisions, PIN lockout, upload handling, provider quotas, and persistence.

@@ -222,7 +222,7 @@ def build(output: Path, site_url: str, test_count: int):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--site-url', default='', help='Verified public HTTPS deployment URL')
-    parser.add_argument('--test-count', type=int, default=102)
+    parser.add_argument('--test-count', type=int, default=103)
     parser.add_argument('--output', type=Path, default=ROOT / 'output/pdf/ReceiveRight-Submission-Brief.pdf')
     args = parser.parse_args()
     if args.site_url and not args.site_url.startswith('https://'):

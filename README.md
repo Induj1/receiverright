@@ -44,7 +44,7 @@ Closing records agreement with the observations. It does not record a refund, cr
 
 ## Evidence, including the failures
 
-**102 automated tests passed**, covering domain rules, API behavior, extraction parsing, recovery, and saved history. The production frontend and Lambda bundle built successfully. The [verification record](docs/VERIFICATION.md) links reproducible checks and distinguishes software behavior from customer outcomes.
+**103 automated tests passed**, covering domain rules, API behavior, extraction parsing, recovery, and saved history. The production frontend and Lambda bundle built successfully. The [verification record](docs/VERIFICATION.md) links reproducible checks and distinguishes software behavior from customer outcomes.
 
 A live AWS smoke run verified recovery and renewal, the supplier workflow, retained responses after a later edit, historical evidence access, closure, and exports. [Sanitized results](docs/deployed-smoke.json)
 
