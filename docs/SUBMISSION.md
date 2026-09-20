@@ -28,7 +28,9 @@ https://github.com/Induj1/receiverright
 
 ## Deployed link to project
 
-**TODO: verified public HTTPS deployment URL.** Verify both the receiver route and supplier review route on a second browser/device.
+https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com
+
+The AWS stack is provisioned; final receiver/supplier smoke verification is in progress. Current runtime uses manual invoice entry and deterministic template summaries because Textract and Bedrock access remain blocked.
 
 ## YouTube video demo link
 

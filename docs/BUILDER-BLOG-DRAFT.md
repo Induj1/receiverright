@@ -1,6 +1,6 @@
 # When an invoice says "carton," the arithmetic needs a human
 
-*AWS Builder Center draft. Not published. Project: [ReceiveRight](https://github.com/Induj1/receiverright). Deployment verification is still in progress; update the live link and provider status before publishing.*
+*AWS Builder Center draft. Not published. [Source](https://github.com/Induj1/receiverright) · [Deployed app](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com). Final deployment verification is in progress. Current mode: manual invoice entry and template summaries.*
 
 We built ReceiveRight around a small moment: a shop receives a delivery, and someone needs to decide whether what arrived matches the invoice. The original document, physical counts, photographs, and supplier's reply should be easy to understand together. Our project turns those pieces into one receiving record.
 

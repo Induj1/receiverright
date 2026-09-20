@@ -9,7 +9,7 @@ Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted im
 | Submission resource | Status |
 | --- | --- |
 | Source repository | [github.com/Induj1/receiverright](https://github.com/Induj1/receiverright) |
-| Public deployment | Pending final deployment verification; add the verified HTTPS URL here. |
+| Public deployment | [Open ReceiveRight](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) - AWS stack provisioned; final smoke verification in progress. Manual invoice entry and template summaries are enabled. |
 | Video demonstration | Recording/public or unlisted YouTube URL pending. [Recording script](docs/DEMO-SCRIPT.md) |
 | Submission answers | [Submission draft](docs/SUBMISSION.md) — replace clearly marked missing team details. |
 | API and types | [API contract](API-CONTRACT.md), [shared types](shared/types.ts) |
