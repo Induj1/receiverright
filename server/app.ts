@@ -4,14 +4,16 @@ import rateLimit from 'express-rate-limit';
 import {randomBytes, randomInt, randomUUID, timingSafeEqual} from 'node:crypto';
 import path from 'node:path';
 import {z, ZodError} from 'zod';
-import type {ReceivingCase, Evidence, AuditEvent, Session, ShareResult, SupplierResponse} from '../shared/types.js';
+import type {ReceivingCase, Evidence, AuditEvent, ShareResult, SupplierResponse} from '../shared/types.js';
 import {reconcileCase, validateCaseInput} from '../shared/domain.js';
 import {makeSampleCase} from '../shared/fixtures.js';
-import {Conflict, defaultStore, type Store, type Stored} from './store.js';
+import {Conflict, defaultStore, type Store, type Stored, type Write} from './store.js';
 import {digest, Providers, UploadProblem, type UploadRecord, type EvidenceRecord} from './providers.js';
+import {ensureSnapshot,getSnapshot,listSnapshots,MAX_CASE_SNAPSHOTS,snapshotNotice,snapshotWrites} from './snapshots.js';
+import {newSession,workspaceRoutes,WorkspaceError,type ReceiverSession} from './workspaces.js';
+import {ExtractionProblem} from './extraction.js';
 
 class HttpError extends Error { constructor(readonly status:number,message:string,readonly code?:string,readonly details?:unknown) { super(message); } }
-interface ReceiverSession {workspaceId:string; name:string; expiresAt:number;}
 interface Share {caseId:string; workspaceId:string; revision:number; pinHash:string; expiresAt:number; attempts:number; lockedUntil?:number;}
 interface SupplierSession {shareHash:string; caseId:string; workspaceId:string; revision:number; expiresAt:number;}
 const now = () => new Date().toISOString();
@@ -20,7 +22,7 @@ const token = () => randomBytes(32).toString('base64url');
 const id = z.string().min(1).max(100).regex(/^[a-zA-Z0-9_-]+$/);
 const amount = z.number().finite().min(0).max(1_000_000);
 const box = z.object({left:z.number().min(0).max(1),top:z.number().min(0).max(1),width:z.number().min(0).max(1),height:z.number().min(0).max(1),page:z.number().int().min(1).max(1000),confidence:z.number().min(0).max(100)}).strict();
-const lineSchema = z.object({id,description:z.string().max(300),sku:z.string().max(100),billedQty:amount,billedUnit:z.string().min(1).max(30),packSize:amount.positive().nullable(),receivedQty:amount.nullable(),damagedQty:amount,wrongQty:amount,unitPriceMinor:z.number().int().min(0).max(100_000_000_000).nullable(),confirmed:z.boolean(),note:z.string().max(500),source:box.optional()}).strict();
+const lineSchema = z.object({id,description:z.string().max(300),sku:z.string().max(100),billedQty:amount.nullable(),billedUnit:z.string().min(1).max(30),packSize:amount.positive().nullable(),receivedQty:amount.nullable(),damagedQty:amount,wrongQty:amount,unitPriceMinor:z.number().int().min(0).max(100_000_000_000).nullable(),confirmed:z.boolean(),note:z.string().max(500),source:box.optional()}).strict();
 const editable = {supplier:z.string().max(200),supplierEmail:z.string().max(254).refine(v=>!v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),'Enter a valid email address.'),shopName:z.string().max(200),invoiceNumber:z.string().max(100),invoiceDate:z.string().max(40),lines:z.array(lineSchema).max(100)};
 const createSchema = z.object(editable).partial().strict();
 const updateSchema = z.object({...editable,revision:z.number().int().min(1)}).partial({supplier:true,supplierEmail:true,shopName:true,invoiceNumber:true,invoiceDate:true,lines:true}).strict();
@@ -54,9 +56,17 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
   app.use(express.json({limit:'512kb'}));
 
   const receiver = async (req:Request,res:Response,next:NextFunction) => {
-    try { const stored = await store.get<ReceiverSession>('SESSION',digest(bearer(req))); if (!stored || stored.value.expiresAt<=seconds()) throw new HttpError(401,'Your workspace session expired. Start a new workspace.','UNAUTHORIZED'); res.locals.receiver = stored.value; next(); } catch(error) { next(error); }
+    try { const stored = await store.get<ReceiverSession>('SESSION',digest(bearer(req))); if (!stored || stored.value.expiresAt<=seconds()) throw new HttpError(401,'Your workspace session expired. Restore access using your saved recovery code.','UNAUTHORIZED'); res.locals.receiver = stored.value; res.locals.receiverStored=stored; next(); } catch(error) { next(error); }
   };
-  const getCase = async (workspaceId:string,caseId:string) => { const record = await store.get<ReceivingCase>(caseKey(workspaceId),caseSk(caseId)); if (!record) throw new HttpError(404,'Receiving case not found.'); return record; };
+  const getCase = async (workspaceId:string,caseId:string) => {
+    for(let attempt=0;attempt<3;attempt++) {
+      const record=await store.get<ReceivingCase>(caseKey(workspaceId),caseSk(caseId));
+      if(!record) throw new HttpError(404,'Receiving case not found.');
+      try {await ensureSnapshot(store,workspaceId,record);return record;}
+      catch(error){if(!(error instanceof Conflict)) throw error;}
+    }
+    throw new Conflict();
+  };
   const checkRevision = (stored:Stored<ReceivingCase>,revision:number) => { if(stored.value.revision!==revision) throw new HttpError(409,'This receiving record changed. Refresh before continuing.','REVISION_CONFLICT'); };
   const checkEditable = (record:ReceivingCase) => { if(record.status==='closed') throw new HttpError(409,'This case is closed and can no longer be edited.'); };
   const checkRecordSize = (record:ReceivingCase) => {
@@ -64,7 +74,12 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     // Reject oversize changes explicitly before storage, leaving the saved case intact.
     if(Buffer.byteLength(JSON.stringify(record),'utf8')>350_000) throw new HttpError(413,'This receiving record has reached its size limit. Shorten long notes or split a large delivery into smaller receiving records. Export the existing record to preserve it.','CASE_SIZE_LIMIT');
   };
-  const putCase = async (stored:Stored<ReceivingCase>) => { stored.value.updatedAt=now(); checkRecordSize(stored.value); await store.put(stored.pk,stored.sk,stored.value,stored.version); return stored.value; };
+  const putCase = async (stored:Stored<ReceivingCase>,additionalWrites:Write[] = []) => {
+    if(stored.version>=MAX_CASE_SNAPSHOTS) throw new HttpError(409,'This record has reached its 1,000 saved-state limit. Its complete saved history remains available. Export it and create a new receiving record to continue.','CASE_HISTORY_LIMIT');
+    stored.value.updatedAt=now();checkRecordSize(stored.value);
+    await store.transact([{pk:stored.pk,sk:stored.sk,value:stored.value,expected:stored.version},...snapshotWrites(stored.pk.slice('WORKSPACE#'.length),stored.value,stored.version+1),...additionalWrites]);
+    return stored.value;
+  };
   const getShare = async (hash:string) => { const share = await store.get<Share>('SHARE',hash); if (!share || share.value.expiresAt<=seconds()) throw new HttpError(410,'This review link has expired or is unavailable.'); const record = await getCase(share.value.workspaceId,share.value.caseId); if(record.value.revision!==share.value.revision) throw new HttpError(409,'The receiver updated this case. Ask for a new review link.','STALE_SHARE'); return {share,record}; };
   const supplier = async (req:Request) => { const session = await store.get<SupplierSession>('SUPPLIER_SESSION',digest(bearer(req))); if(!session || session.value.expiresAt<=seconds()) throw new HttpError(401,'Unlock the review link with its PIN again.'); const {share,record} = await getShare(session.value.shareHash); if(share.value.revision!==session.value.revision) throw new HttpError(409,'This review session is no longer current.','STALE_SHARE'); return {session:session.value,share,record}; };
   const caseForRequest = (req:Request,res:Response) => getCase((res.locals.receiver as ReceiverSession).workspaceId,parameter(req,'id'));
@@ -84,10 +99,9 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
   app.get('/api/health',(_req,res)=>res.json({status:'ok',storage:store.kind,extraction:providers.textractEnabled ? 'textract' : 'manual',summaries:providers.model ? 'bedrock' : 'template',version:'1.0.0',...(process.env.AWS_REGION ? {region:process.env.AWS_REGION} : {})}));
   app.post('/api/sessions',rateLimit({windowMs:60_000,limit:12,standardHeaders:false,legacyHeaders:false,message:{error:'Please wait before creating another workspace.'}}),async(req,res)=>{
     const body = z.object({name:z.string().trim().max(80).optional()}).strict().parse(req.body);
-    const access = token(); const workspaceId = randomUUID(); const expiresAt=seconds()+7*24*3600; const name=body.name || 'Receiver';
-    await store.put('SESSION',digest(access),{workspaceId,name,expiresAt},null,expiresAt);
-    const session:Session = {token:access,name,workspaceId,isDemo:false}; res.status(201).json(session);
+    res.status(201).json(await newSession(store,randomUUID(),body.name || 'Receiver'));
   });
+  workspaceRoutes(app,store,receiver);
   app.use('/api/cases',receiver);
   app.get('/api/cases',async(_req,res)=>{ const all = await store.list<ReceivingCase>(caseKey(res.locals.receiver.workspaceId)); res.json({cases:all.filter(r=>r.sk.startsWith('CASE#')).map(r=>r.value).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))}); });
   const limitCases = async (res:Response) => { if ((await store.list(caseKey(res.locals.receiver.workspaceId))).length>=25) throw new HttpError(429,'This workspace has reached its 25-case limit.'); };
@@ -98,13 +112,23 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     const issues=validateCaseInput(record); if(issues.length) throw new HttpError(422,'Some receiving details are invalid.','INVALID_CASE',issues);
     history(record,actor(res),'created','Created an empty receiving record.');
     checkRecordSize(record);
-    await store.put(caseKey(res.locals.receiver.workspaceId),caseSk(record.id),record,null); res.status(201).json(record);
+    await store.transact([{pk:caseKey(res.locals.receiver.workspaceId),sk:caseSk(record.id),value:record,expected:null},...snapshotWrites(res.locals.receiver.workspaceId,record,1)]);res.status(201).json(record);
   });
   app.post('/api/cases/sample',async(req,res)=>{
     empty.parse(req.body); await limitCases(res); const record=makeSampleCase();
-    await store.put(caseKey(res.locals.receiver.workspaceId),caseSk(record.id),record,null); res.status(201).json(record);
+    checkRecordSize(record);await store.transact([{pk:caseKey(res.locals.receiver.workspaceId),sk:caseSk(record.id),value:record,expected:null},...snapshotWrites(res.locals.receiver.workspaceId,record,1)]);res.status(201).json(record);
   });
   app.get('/api/cases/:id',async(req,res)=>res.json((await caseForRequest(req,res)).value));
+  app.get('/api/cases/:id/revisions',async(req,res)=>{
+    const stored=await caseForRequest(req,res);
+    res.json({revisions:await listSnapshots(store,res.locals.receiver.workspaceId,stored),notice:snapshotNotice});
+  });
+  app.get('/api/cases/:id/revisions/:snapshotId',async(req,res)=>{
+    const stored=await caseForRequest(req,res);
+    const snapshot=await getSnapshot(store,res.locals.receiver.workspaceId,stored.value.id,parameter(req,'snapshotId'));
+    if(!snapshot) throw new HttpError(404,'Saved revision not found.');
+    res.json({snapshotId:snapshot.snapshotId,savedAt:snapshot.savedAt,record:snapshot.record,reconciliation:reconcileCase(snapshot.record),notice:snapshotNotice});
+  });
   app.put('/api/cases/:id',async(req,res)=>{
     const {revision,...patch}=updateSchema.parse(req.body); const stored=await caseForRequest(req,res); checkRevision(stored,revision); checkEditable(stored.value);
     const candidate={...stored.value,...patch}; const issues=validateCaseInput(candidate); if(issues.length) throw new HttpError(422,'Some receiving details are invalid.','INVALID_CASE',issues);
@@ -121,8 +145,9 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     const {revision}=revisionSchema.parse(req.body); const stored=await caseForRequest(req,res); checkRevision(stored,revision); checkEditable(stored.value);
     if(!reconcileCase(stored.value).ready) throw new HttpError(422,'Complete receiver verification before sharing.','NOT_READY');
     const shareId=token(); const pin=String(randomInt(0,1_000_000)).padStart(6,'0'); const expiresAt=seconds()+48*3600;
-    stored.value.status='shared'; history(stored.value,actor(res),'shared','Created a PIN-protected supplier review link, valid for 48 hours.'); await putCase(stored);
-    await store.put<Share>('SHARE',digest(shareId),{caseId:stored.value.id,workspaceId:res.locals.receiver.workspaceId,revision,pinHash:digest(`${shareId}:${pin}`),expiresAt,attempts:0},null,expiresAt);
+    stored.value.status='shared'; history(stored.value,actor(res),'shared','Created a PIN-protected supplier review link, valid for 48 hours.');
+    const share:Share={caseId:stored.value.id,workspaceId:res.locals.receiver.workspaceId,revision,pinHash:digest(`${shareId}:${pin}`),expiresAt,attempts:0};
+    await putCase(stored,[{pk:'SHARE',sk:digest(shareId),value:share,expected:null,expiresAt}]);
     const result:ShareResult={shareId,pin,url:`/review/${shareId}`,expiresAt:new Date(expiresAt*1000).toISOString(),revision}; res.status(201).json(result);
   });
   app.post('/api/cases/:id/close',async(req,res)=>{
@@ -163,18 +188,21 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     try {verified=await providers.verifyUpload(upload.value);} catch(error) {if(error instanceof UploadProblem) throw error; throw new HttpError(422,'The upload is incomplete. Upload the file before confirming.');}
     const evidence:Evidence={id:upload.value.id,fileName:upload.value.fileName,mimeType:upload.value.mimeType,kind:upload.value.kind,...(upload.value.lineId ? {lineId:upload.value.lineId} : {}),url:`/api/evidence/${upload.value.id}`,createdAt:now()};
     const evidenceRecord:EvidenceRecord={evidence,caseId:stored.value.id,workspaceId:res.locals.receiver.workspaceId,...verified,size:upload.value.size};
-    const prior=await store.get<EvidenceRecord>('EVIDENCE',evidence.id); if(!prior) await store.put('EVIDENCE',evidence.id,evidenceRecord,null);
+    const prior=await store.get<EvidenceRecord>('EVIDENCE',evidence.id);
     stored.value.evidence.push(evidence); stored.value.revision+=1; stored.value.status='draft'; stored.value.responses=[]; delete stored.value.summary;
-    history(stored.value,actor(res),'evidence_added',`Attached ${evidence.kind}: ${evidence.fileName}. Previous review links no longer apply.`); await putCase(stored);
-    upload.value.completed=true; upload.value.evidenceId=evidence.id; await store.put(upload.pk,upload.sk,upload.value,upload.version,upload.value.expiresAt); res.status(201).json(evidence);
+    history(stored.value,actor(res),'evidence_added',`Attached ${evidence.kind}: ${evidence.fileName}. Previous review links no longer apply.`);
+    upload.value.completed=true;upload.value.evidenceId=evidence.id;
+    await putCase(stored,[...(!prior ? [{pk:'EVIDENCE',sk:evidence.id,value:evidenceRecord,expected:null}] : []),{pk:upload.pk,sk:upload.sk,value:upload.value,expected:upload.version,expiresAt:upload.value.expiresAt}]);res.status(201).json(evidence);
   });
   app.get('/api/evidence/:id',async(req,res)=>{
     const access=bearer(req); const evidence=await store.get<EvidenceRecord>('EVIDENCE',parameter(req,'id')); if(!evidence) throw new HttpError(404,'Evidence not found.');
     const receiverSession=await store.get<ReceiverSession>('SESSION',digest(access));
     let record:Stored<ReceivingCase>;
     if(receiverSession && receiverSession.value.expiresAt>seconds() && receiverSession.value.workspaceId===evidence.value.workspaceId) record=await getCase(receiverSession.value.workspaceId,evidence.value.caseId);
-    else {const approved=await supplier(req); if(approved.session.workspaceId!==evidence.value.workspaceId || approved.session.caseId!==evidence.value.caseId) throw new HttpError(404,'Evidence not found.'); record=approved.record;}
-    if(!record.value.evidence.some(e=>e.id===evidence.value.evidence.id)) throw new HttpError(404,'Evidence not found.');
+    else {
+      const approved=await supplier(req);if(approved.session.workspaceId!==evidence.value.workspaceId || approved.session.caseId!==evidence.value.caseId) throw new HttpError(404,'Evidence not found.');record=approved.record;
+      if(!record.value.evidence.some(e=>e.id===evidence.value.evidence.id)) throw new HttpError(404,'Evidence not found.');
+    }
     const file=await providers.download(evidence.value);
     if(file.url) return res.redirect(302,file.url);
     res.type(evidence.value.evidence.mimeType); res.set('Content-Disposition',`inline; filename="${safeFilename(evidence.value.evidence.fileName).replace(/"/g,'_')}"`); res.send(file.bytes);
@@ -187,7 +215,7 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     if(evidence.value.evidence.kind!=='invoice') throw new HttpError(422,'Select an invoice document for extraction.');
     await consumeAiQuota();
     try {const result=await providers.extract(evidence.value); history(stored.value,actor(res),'extracted','AWS Textract returned candidate invoice fields. Human review and save are required.'); stored.value.extractionProvider='textract'; await putCase(stored); res.json(result);}
-    catch(error) { if(error instanceof Conflict) throw error; throw new HttpError(502,'Textract could not read this invoice. Try a clear single-page JPEG, PNG, or supported PDF, or enter it manually.','EXTRACTION_FAILED'); }
+    catch(error) { if(error instanceof Conflict || error instanceof HttpError) throw error; if(error instanceof ExtractionProblem) throw new HttpError(422,error.message,error.code); throw new HttpError(502,'Textract could not read this invoice. Try a clear single-page JPEG, PNG, or supported PDF, or enter it manually.','EXTRACTION_FAILED'); }
   });
 
   app.post('/api/shares/:shareId/open',async(req,res)=>{
@@ -237,6 +265,7 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
   app.use((error:unknown,_req:Request,res:Response,_next:NextFunction)=>{
     if(error instanceof ZodError) return res.status(400).json({error:'Check the supplied fields.',code:'INVALID_INPUT',details:error.issues.map(i=>({path:i.path.join('.'),message:i.message}))});
     if(error instanceof HttpError) return res.status(error.status).json({error:error.message,code:error.code,details:error.details});
+    if(error instanceof WorkspaceError) return res.status(error.status).json({error:error.message,code:error.code});
     if(error instanceof Conflict) return res.status(409).json({error:error.message,code:'REVISION_CONFLICT'});
     if(error instanceof UploadProblem) return res.status(422).json({error:error.message,code:'INVALID_UPLOAD'});
     const parserError=error as {status?:number;type?:string};
