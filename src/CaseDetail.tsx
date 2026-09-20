@@ -324,6 +324,7 @@ export default function CaseDetail({
               className="button button-secondary"
               onClick={() => setExportOpen(!exportOpen)}
               aria-expanded={exportOpen}
+              aria-label="Export"
             >
               <Download size={16} />
               <span className="hide-small">Export</span>
