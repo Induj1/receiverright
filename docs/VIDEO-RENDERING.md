@@ -28,6 +28,6 @@ Repeat the shot object for each captured screen. Aim for 310-360 spoken words in
 powershell.exe -NoProfile -File scripts/render-demo.ps1
 ```
 
-The default output is `output/video/ReceiveRight-Demo.mp4`, accompanied by a transcript and rendering report. Both source screenshot paths and actual duration are recorded. The target is 165 seconds; the script rejects narration that cannot fit below 175 seconds and verifies the final file stays below three minutes. It preserves the entire screenshot, scaled to fit, without inventing application UI or obscuring it with captions.
+The default output is `output/video/ReceiveRight-Demo.mp4`, accompanied by a transcript, SRT subtitles and rendering report. Subtitle timing uses Windows speech word-position events. Both source screenshot paths and actual duration are recorded. The target is 165 seconds; the script rejects narration that cannot fit below 175 seconds and verifies the final file stays below three minutes. It preserves the entire screenshot, scaled to fit, without inventing application UI or obscuring it with captions. Manifest text is read as UTF-8 to preserve rupee symbols and other Unicode captions.
 
 Review the output visually and listen to the narration before publishing. Confirm the title/caption text, readable interface, accurate provider labels, total duration, and successful audio/video playback. Replace the YouTube field in `docs/SUBMISSION.md` only after the actual public or unlisted upload exists.

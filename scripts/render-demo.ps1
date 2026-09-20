@@ -31,6 +31,10 @@ function Read-Duration([string]$Path) {
     return [double]::Parse(($raw -join '').Trim(), [System.Globalization.CultureInfo]::InvariantCulture)
 }
 function Decimal([double]$Value) { return $Value.ToString('0.000', [System.Globalization.CultureInfo]::InvariantCulture) }
+function Subtitle-Time([double]$Seconds) {
+    $time = [TimeSpan]::FromMilliseconds([Math]::Round($Seconds * 1000))
+    return '{0:00}:{1:00}:{2:00},{3:000}' -f [Math]::Floor($time.TotalHours), $time.Minutes, $time.Seconds, $time.Milliseconds
+}
 function Filter-Path([string]$Path) {
     return "'" + $Path.Replace('\', '/').Replace(':', '\:').Replace("'", "\'") + "'"
 }
@@ -50,7 +54,7 @@ function Wrap-Caption([string]$Text, [int]$Width = 118) {
 
 $manifestFile = Resolve-ProjectPath $ManifestPath
 $outputFile = Resolve-ProjectPath $OutputPath
-$manifest = Get-Content -LiteralPath $manifestFile -Raw | ConvertFrom-Json
+$manifest = Get-Content -LiteralPath $manifestFile -Raw -Encoding UTF8 | ConvertFrom-Json
 $shots = @($manifest.shots)
 if ($shots.Count -lt 1 -or $shots.Count -gt 12) { throw 'Provide 1-12 actual screenshots. Seven or eight is recommended for the submission.' }
 $target = if ($manifest.targetDurationSeconds) { [double]$manifest.targetDurationSeconds } else { 165.0 }
@@ -77,13 +81,23 @@ try {
         if (-not (Test-Path -LiteralPath $imagePath -PathType Leaf)) { throw "Screenshot not found: $imagePath" }
         $stem = '{0:00}' -f ($index + 1)
         $wavePath = Join-Path $renderRoot ($stem + '.wav')
-        $synth.SetOutputToWaveFile($wavePath)
-        $synth.Speak([string]$shot.narration)
-        $synth.SetOutputToNull()
+        $progressId = 'receiverright-speech-' + [System.Guid]::NewGuid().ToString('N')
+        $subscription = Register-ObjectEvent -InputObject $synth -EventName SpeakProgress -SourceIdentifier $progressId
+        try {
+            $synth.SetOutputToWaveFile($wavePath)
+            $synth.Speak([string]$shot.narration)
+            $synth.SetOutputToNull()
+            $words = @(Get-Event -SourceIdentifier $progressId -ErrorAction SilentlyContinue | ForEach-Object {
+                [PSCustomObject]@{ start=$_.SourceEventArgs.AudioPosition.TotalSeconds; position=$_.SourceEventArgs.CharacterPosition; length=$_.SourceEventArgs.CharacterCount }
+            })
+        } finally {
+            Unregister-Event -SourceIdentifier $progressId -ErrorAction SilentlyContinue
+            Get-Event -SourceIdentifier $progressId -ErrorAction SilentlyContinue | Remove-Event -ErrorAction SilentlyContinue
+        }
         $speechSeconds = Read-Duration $wavePath
         $minimum = $speechSeconds + 0.8
         if ($shot.durationSeconds) { $minimum = [Math]::Max($minimum, [double]$shot.durationSeconds) }
-        $clips.Add([PSCustomObject]@{ index=$index+1; stem=$stem; image=$imagePath; title=[string]$shot.title; caption=Wrap-Caption ([string]$shot.caption); narration=[string]$shot.narration; wave=$wavePath; speechSeconds=$speechSeconds; seconds=$minimum })
+        $clips.Add([PSCustomObject]@{ index=$index+1; stem=$stem; image=$imagePath; title=[string]$shot.title; caption=Wrap-Caption ([string]$shot.caption); narration=[string]$shot.narration; wave=$wavePath; speechSeconds=$speechSeconds; words=$words; seconds=$minimum })
         Write-Host ("Narrated shot {0}/{1}: {2:N1} seconds" -f ($index + 1), $shots.Count, $speechSeconds)
     }
 } finally { $synth.Dispose() }
@@ -141,10 +155,37 @@ $actualDuration = Read-Duration $outputFile
 if ($actualDuration -ge 180) { throw "Rendered duration is $actualDuration seconds; shorten the manifest before publication." }
 $transcriptPath = [System.IO.Path]::ChangeExtension($outputFile, '.transcript.txt')
 Write-Utf8 $transcriptPath ($transcript -join "`r`n")
+$subtitlePath = [System.IO.Path]::ChangeExtension($outputFile, '.srt')
+$subtitles = [System.Collections.Generic.List[string]]::new()
+$timeline = 0.0
+$cueNumber = 0
+foreach ($clip in $clips) {
+    if (-not $clip.words.Count) { throw 'Narration word timestamps were unavailable; subtitle generation requires Windows SpeakProgress events.' }
+    $groupStart = 0
+    for ($wordIndex = 0; $wordIndex -lt $clip.words.Count; $wordIndex++) {
+        $startCharacter = [int]$clip.words[$groupStart].position
+        $endCharacter = [int]$clip.words[$wordIndex].position + [int]$clip.words[$wordIndex].length
+        while ($endCharacter -lt $clip.narration.Length -and $clip.narration[$endCharacter] -match '[.,!?;:]') { $endCharacter++ }
+        $text = $clip.narration.Substring($startCharacter, $endCharacter - $startCharacter).Trim()
+        $lastWord = $wordIndex -eq ($clip.words.Count - 1)
+        if ($text.Length -ge 65 -or ($text.Length -ge 28 -and $text -match '[.!?]$') -or $lastWord) {
+            $cueNumber++
+            $start = $timeline + [double]$clip.words[$groupStart].start
+            $end = if ($lastWord) { $timeline + $clip.speechSeconds } else { $timeline + [double]$clip.words[$wordIndex + 1].start }
+            $subtitles.Add([string]$cueNumber)
+            $subtitles.Add((Subtitle-Time $start) + ' --> ' + (Subtitle-Time $end))
+            $subtitles.Add((Wrap-Caption $text 46))
+            $subtitles.Add('')
+            $groupStart = $wordIndex + 1
+        }
+    }
+    $timeline += $clip.seconds
+}
+Write-Utf8 $subtitlePath ($subtitles -join "`r`n")
 $reportPath = [System.IO.Path]::ChangeExtension($outputFile, '.render.json')
 $report = [ordered]@{
     output=$outputFile; format='Narrated walkthrough of actual screenshots, not a live screen recording';
-    width=1920; height=1080; frameRate=30; durationSeconds=$actualDuration; voice=$voiceName;
+    width=1920; height=1080; frameRate=30; durationSeconds=$actualDuration; voice=$voiceName; subtitles=$subtitlePath; subtitleCues=$cueNumber;
     syntheticData=$true; manifest=$manifestFile; renderedAt=[DateTime]::UtcNow.ToString('o');
     shots=@($clips | ForEach-Object { [ordered]@{image=$_.image; title=$_.title; durationSeconds=$_.seconds; narration=$_.narration} })
 }
