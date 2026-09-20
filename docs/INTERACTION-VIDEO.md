@@ -2,7 +2,7 @@
 
 `scripts/render-interaction-demo.ps1` turns timestamped browser captures into an MP4 with generated narration. Every source image must be an actual captured application frame. It does not invent interface states, interpolate motion, accelerate interactions, upload a video, or publish anything.
 
-The visible label reads **Recorded app interactions · Synthetic demo · Generated narration**. Pauses between separately captured sections are omitted. Within each section, the original intervals between frames are preserved at normal speed, rounded to the 30 fps output clock. If narration needs more time, the renderer holds the final frame. This is a recording assembled from browser captures, not a claim of uninterrupted desktop capture or a human narrator.
+The visible label reads **Recorded app interactions · Synthetic demo · Generated narration**. Pauses between separately captured sections are omitted. Within each section, the original intervals between retained frames are preserved at normal speed, rounded to the 30 fps output clock. If narration needs more time, the renderer holds the final frame by default. An explicit `holdPosition: "before"` instead holds the first frame, useful for introducing a task before playing its actual interaction. Optional `afterBeforeHoldSeconds` reserves a short final hold too, so viewers can see a completed result; its default is 0.1 seconds. Both holds are reported. This is a recording assembled from browser captures, not a claim of uninterrupted desktop capture or a human narrator.
 
 ## Capture contract
 
@@ -17,6 +17,8 @@ Put each section's actual PNG captures in `.artifacts/interaction-demo/<sectionI
 ```
 
 Use the capture clock rather than invented equal intervals. Every section needs at least two frames. Timestamps must increase by at least 34 ms; more frequent frames cannot all be represented in a 30 fps output and are rejected. The first timestamp is normalized to zero, so a small delay before the first capture is not mistaken for footage. Keep the browser viewport constant within each section. Use synthetic receiving records and avoid capturing workspace recovery codes, live private supplier links, account information, or other secrets.
+
+If original captures are closer than 34 ms, deliberately sample a separate `frames-30fps.json`: retain the first and last captures, keep intermediate frames at least 34 ms apart, and preserve their original timestamps. The source duration and playback speed must not change. Keep the original `frames.json`. Include `sampling` metadata in that section with `originalFrames`, `originalFrameCount`, `retainedFrameCount`, `removedFrameCount`, `removedAtMs`, and `method`. The renderer carries this disclosure into its report. Sampling affects temporal resolution; it is not a way to fit an overlength recording.
 
 Create `.artifacts/interaction-demo/manifest.json`:
 

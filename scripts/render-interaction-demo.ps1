@@ -80,6 +80,10 @@ try {
         if (([string]$section.id) -notmatch '^[a-zA-Z0-9_-]{1,50}$') { throw "Section $($index + 1) id must use only letters, digits, underscores and hyphens." }
         if (([string]$section.title).Length -gt 95) { throw "Section $($index + 1) title is too long." }
         if (([string]$section.caption).Length -gt 175 -or ([string]$section.caption) -match '[\r\n]') { throw "Section $($index + 1) caption must be one line of at most 175 characters." }
+        $holdPosition = if ($section.holdPosition) { [string]$section.holdPosition } else { 'after' }
+        if ($holdPosition -notin @('before','after')) { throw 'holdPosition must be before or after.' }
+        $afterBeforeHold = if ($null -ne $section.afterBeforeHoldSeconds) { [double]$section.afterBeforeHoldSeconds } else { 0.1 }
+        if ($afterBeforeHold -lt 0.1 -or $afterBeforeHold -gt 10) { throw 'afterBeforeHoldSeconds must be between 0.1 and 10.' }
         $framesPath = Resolve-ProjectPath ([string]$section.frames)
         if (-not (Test-Path -LiteralPath $framesPath -PathType Leaf)) { throw "Frame manifest not found: $framesPath" }
         $frameDocument = Get-Content -LiteralPath $framesPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -120,7 +124,7 @@ try {
         }
         $speechSeconds = Read-Duration $wavePath
         $minimum = [Math]::Max($speechSeconds + 0.8, $sourceSeconds + 0.6)
-        $clips.Add([PSCustomObject]@{ index=$index+1; id=[string]$section.id; stem=$stem; framesPath=$framesPath; frames=@($validatedFrames.ToArray()); sourceStartMs=$sourceStartMs; sourceSeconds=$sourceSeconds; title=[string]$section.title; caption=[string]$section.caption; narration=[string]$section.narration; wave=$wavePath; speechSeconds=$speechSeconds; words=$words; seconds=$minimum; finalHoldSeconds=0.0; renderedSeconds=0.0; sourceWidth=0; sourceHeight=0; uiAreaPercent=0.0 })
+        $clips.Add([PSCustomObject]@{ index=$index+1; id=[string]$section.id; stem=$stem; framesPath=$framesPath; frames=@($validatedFrames.ToArray()); sampling=$section.sampling; holdPosition=$holdPosition; afterBeforeHoldSeconds=$afterBeforeHold; initialHoldSeconds=0.0; sourceStartMs=$sourceStartMs; sourceSeconds=$sourceSeconds; title=[string]$section.title; caption=[string]$section.caption; narration=[string]$section.narration; wave=$wavePath; speechSeconds=$speechSeconds; words=$words; seconds=$minimum; finalHoldSeconds=0.0; renderedSeconds=0.0; sourceWidth=0; sourceHeight=0; uiAreaPercent=0.0 })
         Write-Host ("Section {0}/{1} ({2}): {3} captured frames, {4:N2}s source, {5:N2}s narration" -f ($index + 1), $sections.Count, $section.id, $validatedFrames.Count, $sourceSeconds, $speechSeconds)
     }
 } finally { $synth.Dispose() }
@@ -131,7 +135,7 @@ $plan = [ordered]@{ minimumDurationSeconds=$minimumTotal; requestedTargetSeconds
 Write-Utf8 $planFile ($plan | ConvertTo-Json -Depth 5)
 if ($minimumTotal -gt 178.5) {
     $clips | Sort-Object seconds -Descending | Select-Object id,sourceSeconds,speechSeconds,seconds | Format-Table | Out-Host
-    throw ("Normal-speed source footage plus narration needs {0:N2}s. No frames were dropped or sped up. Shorten narration or deliberately record shorter sections; timing report: {1}" -f $minimumTotal,$planFile)
+    throw ("Normal-speed source footage plus narration needs {0:N2}s. No footage was removed or sped up to fit the duration. Shorten narration or deliberately record shorter sections; timing report: {1}" -f $minimumTotal,$planFile)
 }
 $totalSeconds = [Math]::Max($target, $minimumTotal)
 $extraPerClip = ($totalSeconds - $minimumTotal) / $clips.Count
@@ -145,19 +149,23 @@ Write-Utf8 $walkthroughPath ('Recorded app interactions ' + [char]0x00B7 + ' Syn
 $concatLines = [System.Collections.Generic.List[string]]::new()
 $transcript = [System.Collections.Generic.List[string]]::new()
 $transcript.Add('ReceiveRight - recorded app interactions')
-$transcript.Add("Generated narration: $voiceName. Timestamped browser frames preserve captured interaction timing at normal speed; gaps between recorded sections are omitted. Demonstration data is synthetic.")
+$transcript.Add("Generated narration: $voiceName. Timestamped browser frames preserve captured interaction timing at normal speed; gaps between recorded sections are omitted. Extra narration time holds the first or last captured frame. Any explicit 30fps sampling is recorded in the render metadata. Demonstration data is synthetic.")
 $transcript.Add('')
 
 foreach ($clip in $clips) {
-    # Only the final captured frame is held longer. Interaction intervals stay unchanged.
+    # Hold the first or last frame for narration; captured interaction intervals stay unchanged.
     $clip.seconds = [Math]::Ceiling(($clip.seconds + $extraPerClip) * 30) / 30
-    $clip.finalHoldSeconds = $clip.seconds - $clip.sourceSeconds
+    $holdSeconds = $clip.seconds - $clip.sourceSeconds
+    $clip.initialHoldSeconds = if ($clip.holdPosition -eq 'before') { [Math]::Max(0.0, [double]($holdSeconds - $clip.afterBeforeHoldSeconds)) } else { 0.0 }
+    $clip.finalHoldSeconds = $holdSeconds - $clip.initialHoldSeconds
+    if ($clip.finalHoldSeconds -lt 0.0999) { throw 'Frame holds must not truncate the recorded endpoint.' }
     $frameConcatFile = Join-Path $renderRoot ($clip.stem + '-frames.ffconcat')
     $frameConcat = [System.Collections.Generic.List[string]]::new()
     $frameConcat.Add('ffconcat version 1.0')
     for ($frameIndex = 0; $frameIndex -lt $clip.frames.Count; $frameIndex++) {
         $frame = $clip.frames[$frameIndex]
         $frameSeconds = if ($frameIndex -lt ($clip.frames.Count - 1)) { ([double]$clip.frames[$frameIndex + 1].atMs - [double]$frame.atMs) / 1000.0 } else { $clip.finalHoldSeconds }
+        if ($frameIndex -eq 0) { $frameSeconds += $clip.initialHoldSeconds }
         $frameConcat.Add("file '" + $frame.file.Replace('\','/').Replace("'", "'\''") + "'")
         $frameConcat.Add('option framerate 1000')
         $frameConcat.Add('duration ' + (Decimal $frameSeconds))
@@ -245,8 +253,8 @@ $report = [ordered]@{
     output=$outputFile; format='Recorded browser interactions assembled from timestamped actual UI frames, with generated narration';
     width=1920; height=1080; frameRate=30; durationSeconds=$actualDuration; voice=$voiceName; subtitles=$subtitlePath; subtitleCues=$cueNumber;
     syntheticData=$true; manifest=$manifestFile; renderedAt=[DateTime]::UtcNow.ToString('o');
-    sourcePlaybackSpeed=1.0; interSectionPausesOmitted=$true; interactionFramesDropped=0; outputTimestampQuantizationMs=(1000.0/30); outputSha256=(Get-FileHash -LiteralPath $outputFile -Algorithm SHA256).Hash;
-    sections=@($clips | ForEach-Object { [ordered]@{id=$_.id; title=$_.title; frameManifest=$_.framesPath; frameCount=$_.frames.Count; sourceStartMs=$_.sourceStartMs; sourceSeconds=$_.sourceSeconds; sourceWidth=$_.sourceWidth; sourceHeight=$_.sourceHeight; uiAreaPercent=$_.uiAreaPercent; narrationSeconds=$_.speechSeconds; durationSeconds=$_.renderedSeconds; finalFrameHoldSeconds=$_.finalHoldSeconds; narration=$_.narration; frames=$_.frames} })
+    sourcePlaybackSpeed=1.0; interSectionPausesOmitted=$true; rendererInputFramesDropped=0; captureFramesRemovedFor30fps=($clips | ForEach-Object { if ($_.sampling) { [int]$_.sampling.removedFrameCount } else { 0 } } | Measure-Object -Sum).Sum; outputTimestampQuantizationMs=(1000.0/30); outputSha256=(Get-FileHash -LiteralPath $outputFile -Algorithm SHA256).Hash;
+    sections=@($clips | ForEach-Object { [ordered]@{id=$_.id; title=$_.title; frameManifest=$_.framesPath; frameCount=$_.frames.Count; sampling=$_.sampling; sourceStartMs=$_.sourceStartMs; sourceSeconds=$_.sourceSeconds; sourceWidth=$_.sourceWidth; sourceHeight=$_.sourceHeight; uiAreaPercent=$_.uiAreaPercent; narrationSeconds=$_.speechSeconds; durationSeconds=$_.renderedSeconds; initialFrameHoldSeconds=$_.initialHoldSeconds; finalFrameHoldSeconds=$_.finalHoldSeconds; narration=$_.narration; frames=$_.frames} })
 }
 Write-Utf8 $reportPath ($report | ConvertTo-Json -Depth 8)
 Write-Host ("Created {0} ({1:N1} seconds). Transcript: {2}" -f $outputFile,$actualDuration,$transcriptPath)
