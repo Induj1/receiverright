@@ -24,7 +24,7 @@ Resume URLs are needed for consideration for Amazon Fast Track Interviews. Do no
 
 ## GitHub link to project
 
-**TODO: public repository URL after publication.** Verify it is accessible while signed out and includes README, source, tests, and the actual commit history.
+https://github.com/Induj1/receiverright
 
 ## Deployed link to project
 
@@ -48,7 +48,7 @@ Our synthetic demonstration shows a ₹200 shortage and ₹80 of damaged items, 
 
 Amazon API Gateway HTTP API provides the public HTTPS entry point, and AWS Lambda serves the React application and TypeScript/Express API. Amazon DynamoDB stores receiving cases, workspace sessions, supplier links, and responses. Conditional writes preserve revision consistency and reject stale concurrent updates.
 
-A separate private, versioned Amazon S3 bucket stores invoice and delivery evidence. Uploads use short-lived signed URLs, and attached evidence is tied to a checked S3 object version. Amazon Textract AnalyzeExpense returns invoice-item suggestions and source locations for human review; it does not decide what was physically received. The application calculates money in integer paise and requires explicit confirmation of pack conversions and counts.
+A separate private, versioned Amazon S3 bucket stores invoice and delivery evidence. Uploads use short-lived signed URLs, and attached evidence is tied to a checked S3 object version. We implemented an Amazon Textract AnalyzeExpense adapter for editable invoice suggestions and source locations, but an actual service call returned `SubscriptionRequiredException`. The current deployment disables extraction and supports manual invoice entry; we do not claim a successful live Textract result. The application calculates money in integer paise and requires explicit confirmation of pack conversions and counts.
 
 An optional Amazon Bedrock Converse adapter can draft neutral case-summary wording from the computed record. The current deployment leaves Bedrock disabled because account access was unavailable, and explicitly uses a deterministic template. CloudFront was attempted but not used after an account-verification restriction; API Gateway/Lambda provides the working hosting alternative. The interface identifies the configured providers. All included demonstration data is labeled synthetic, and the sample is not presented as a Textract result.
 
@@ -83,7 +83,7 @@ Do not replace this with a claim that Induj manually wrote every part of the imp
 
 **Draft based on implementation work; revise with any additional observed deployment experience.**
 
-Our deployment encountered an account-verification restriction when creating CloudFront infrastructure, and Bedrock access was unavailable. Clearer account-readiness checks before a builder starts deployment would help, especially during a time-limited event. We adapted by serving the app through API Gateway/Lambda and keeping deterministic summaries available; we are not claiming CloudFront or Bedrock as successfully used services.
+Our deployment encountered an account-verification restriction when creating CloudFront infrastructure. Bedrock account verification was pending, and an actual Textract call returned `SubscriptionRequiredException`. Clearer account-readiness and service-activation checks before a builder starts deployment would help, especially during a time-limited event. We adapted by serving the app through API Gateway/Lambda, retaining manual invoice entry and deterministic summaries. We are not claiming successful live CloudFront, Bedrock, or Textract usage.
 
 Preserving the exact evidence a supplier reviewed also required care. With S3, we combined browser CORS, signed upload requests, file-size/type checks, object versioning, and version-specific downloads. A single end-to-end example covering that complete browser-to-review workflow would make the integration easier.
 
@@ -95,7 +95,7 @@ Textract supplies suggested invoice fields, but the application still needs a re
 
 **Use after deployment verification; keep the answer aligned with services actually exercised.**
 
-DynamoDB's conditional writes give the API a clear way to reject stale changes instead of silently overwriting another saved record. S3 version IDs let us preserve the exact evidence snapshot attached to a receiving revision, while signed URLs keep the evidence bucket private. Textract's invoice-oriented response and source geometry fit a side-by-side human review interface better than treating OCR as a block of unstructured text.
+DynamoDB's conditional writes give the API a clear way to reject stale changes instead of silently overwriting another saved record. S3 version IDs let us preserve the exact evidence snapshot attached to a receiving revision, while signed URLs keep the evidence bucket private. Textract's documented invoice-oriented response and source geometry informed our side-by-side review adapter, although account activation prevented us from verifying extraction live.
 
 Lambda and API Gateway fit this application's short request/response workflow and let us serve both the mobile interface and API from one HTTPS entry point when our original CloudFront plan was blocked. We also liked being able to keep AI optional: the evidence workflow and deterministic calculations remain usable when extraction or generated summaries are unavailable.
 

@@ -8,6 +8,7 @@ Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted im
 
 | Submission resource | Status |
 | --- | --- |
+| Source repository | [github.com/Induj1/receiverright](https://github.com/Induj1/receiverright) |
 | Public deployment | Pending final deployment verification; add the verified HTTPS URL here. |
 | Video demonstration | Recording/public or unlisted YouTube URL pending. [Recording script](docs/DEMO-SCRIPT.md) |
 | Submission answers | [Submission draft](docs/SUBMISSION.md) — replace clearly marked missing team details. |
@@ -29,7 +30,7 @@ Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted im
 5. Acknowledge or dispute each affected line. A dispute requires a reason; the supplied responder name is explicitly self-reported.
 6. Return to the receiver record and **Refresh**. Close it after every affected line is acknowledged. Closure records agreement with the observations, not a refund, credit note, payment, or money recovered.
 
-The sample intentionally starts unconfirmed with an unresolved carton conversion. Synthetic sample assets do not run through Textract. To test extraction on an AWS deployment, create a record and upload a supported invoice document of your own.
+The sample intentionally starts unconfirmed with an unresolved carton conversion. Synthetic sample assets do not run through Textract. Extraction currently requires account activation; once enabled and verified, test it by creating a record and uploading a supported invoice document of your own.
 
 ## What is implemented
 
@@ -72,7 +73,8 @@ Optional backend environment variables can be set in an uncommitted `.env` file:
 | `DATA_DIR` | Local JSON records and sealed uploaded files; `.data`. |
 | `AWS_REGION` | Region for AWS SDK clients when running with AWS services. |
 | `TABLE_NAME` | Enables DynamoDB persistence. If omitted, local JSON storage is used. |
-| `EVIDENCE_BUCKET` | Enables versioned private S3 evidence storage and Textract extraction. |
+| `EVIDENCE_BUCKET` | Enables versioned private S3 evidence storage. |
+| `TEXTRACT_ENABLED` | Explicitly enables Textract when service access is available; the current AWS deployment sets this to `false` because the account requires service activation. |
 | `BEDROCK_MODEL_ID` | Optional enabled Bedrock model/inference profile supporting `Converse`. If omitted, summaries use deterministic templates. |
 | `MAX_DAILY_AI_CALLS` | Shared daily cap across extraction and Bedrock summaries; `50`. Failed provider calls still consume an attempt. |
 
@@ -87,12 +89,11 @@ flowchart LR
   L --> DB[DynamoDB: cases, sessions, shares]
   L --> S3[Private versioned S3 evidence]
   B -->|Short-lived upload URL| S3
-  L --> TX[Textract AnalyzeExpense]
-  TX --> S3
+  L -. Adapter, disabled pending activation .-> TX[Textract AnalyzeExpense]
   L -. Optional summary wording .-> BR[Amazon Bedrock]
 ```
 
-The current deployment route serves the React assets and Express API through the same API Gateway HTTPS endpoint and Lambda. DynamoDB keeps records and conditional writes; S3 stores private evidence; Textract proposes invoice fields. CloudFront/S3 static hosting was the initial design, but the account encountered a CloudFront verification restriction; it is not claimed as part of the running deployment. The Lambda hosting route preserves a public HTTPS application without that dependency.
+The current deployment route serves the React assets and Express API through the same API Gateway HTTPS endpoint and Lambda. DynamoDB keeps records and conditional writes; S3 stores private evidence. The Textract adapter is implemented, but an actual `AnalyzeExpense` request returned `SubscriptionRequiredException`; extraction is disabled until account activation is resolved. Manual invoice entry remains available. CloudFront/S3 static hosting was the initial design, but the account encountered a CloudFront verification restriction; it is not claimed as part of the running deployment. The Lambda hosting route preserves a public HTTPS application without that dependency.
 
 Bedrock access was also unavailable during initial deployment work, so the live configuration leaves it disabled and uses deterministic summary templates. Its optional adapter never performs monetary calculations. The server's `/api/health` response identifies configured providers, not proof that every downstream service has passed a live availability check. See deployment outputs and verification records before claiming a live AWS result.
 
