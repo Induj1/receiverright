@@ -56,11 +56,11 @@ export async function api<T>(
   if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(`/api${path}`, { ...options, headers });
   if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({
-        error: `Request failed (${response.status}). Please try again.`,
-      }));
+    if (response.status === 401 && token && token === readSession()?.token)
+      window.dispatchEvent(new Event("receiverright:session-expired"));
+    const error = await response.json().catch(() => ({
+      error: `Request failed (${response.status}). Please try again.`,
+    }));
     throw new ApiError(
       error.error || "Something went wrong. Please try again.",
       response.status,

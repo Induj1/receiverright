@@ -42,6 +42,7 @@ import type {
   ShareResult,
 } from "../shared/types";
 import { reconcileCase, requiresPackSize } from "../shared/domain";
+import RevisionHistory from "./RevisionHistory";
 import {
   api,
   ApiError,
@@ -73,8 +74,8 @@ const emptyLine = (): InvoiceLine => ({
   id: crypto.randomUUID(),
   description: "",
   sku: "",
-  billedQty: 1,
-  billedUnit: "piece",
+  billedQty: null,
+  billedUnit: "unknown",
   packSize: null,
   receivedQty: null,
   damagedQty: 0,
@@ -156,9 +157,12 @@ export default function CaseDetail({
   useEffect(() => {
     if (!dirty) return;
     const listener = (event: Event) => {
-      const destination = (event as CustomEvent<{ to: string }>).detail?.to;
+      const detail = (event as CustomEvent<{ to: string; probe?: boolean }>)
+        .detail;
+      const destination = detail?.to;
       if (!destination) return;
       event.preventDefault();
+      if (detail.probe) return;
       setLeaveTo(destination);
     };
     window.addEventListener("receiverright:navigate", listener);
@@ -419,6 +423,16 @@ export default function CaseDetail({
           </div>
         </div>
       )}
+      {dirty && (saved.responses.length > 0 || saved.status === "shared") && (
+        <div className="notice notice-warning">
+          <History size={18} />
+          <p>
+            Saving edits creates a new revision and retires the current review
+            link. Earlier responses stay in Saved versions. Share the updated
+            record for a fresh response.
+          </p>
+        </div>
+      )}
       <div
         className="detail-tabs"
         role="tablist"
@@ -428,6 +442,7 @@ export default function CaseDetail({
           ["review", ClipboardCheck, "Verify delivery"],
           ["evidence", Camera, "Evidence", draft.evidence.length],
           ["activity", History, "Activity", draft.history.length],
+          ["revisions", FileText, "Saved versions"],
         ].map(([value, Icon, label, count]) => {
           const I = Icon as typeof ClipboardCheck;
           return (
@@ -676,6 +691,22 @@ export default function CaseDetail({
                             <Trash2 size={15} />
                           </button>
                         </div>
+                        {(line.billedQty == null ||
+                          line.billedUnit === "unknown") && (
+                          <div className="item-uncertainty">
+                            <AlertCircle size={15} />
+                            <span>
+                              Check the invoice:{" "}
+                              {line.billedQty == null &&
+                              line.billedUnit === "unknown"
+                                ? "quantity and unit are unknown"
+                                : line.billedQty == null
+                                  ? "quantity is unknown"
+                                  : "billed unit is unknown"}
+                              . Calculation waits for your entry.
+                            </span>
+                          </div>
+                        )}
                         <div className="item-fields">
                           <label>
                             Billed quantity
@@ -683,10 +714,15 @@ export default function CaseDetail({
                               type="number"
                               min="0"
                               step="1"
-                              value={line.billedQty}
+                              value={line.billedQty ?? ""}
+                              placeholder="Unknown"
+                              aria-invalid={line.billedQty == null}
                               onChange={(e) =>
                                 updateLine(line.id, {
-                                  billedQty: Number(e.target.value),
+                                  billedQty:
+                                    e.target.value === ""
+                                      ? null
+                                      : Number(e.target.value),
                                 })
                               }
                             />
@@ -695,6 +731,7 @@ export default function CaseDetail({
                             Billed unit
                             <select
                               value={line.billedUnit}
+                              aria-invalid={line.billedUnit === "unknown"}
                               onChange={(e) =>
                                 updateLine(line.id, {
                                   billedUnit: e.target.value,
@@ -702,7 +739,9 @@ export default function CaseDetail({
                                 })
                               }
                             >
+                              <option value="unknown">Choose unit</option>
                               {![
+                                "unknown",
                                 "piece",
                                 "unit",
                                 "bottle",
@@ -710,6 +749,7 @@ export default function CaseDetail({
                                 "carton",
                                 "pack",
                                 "box",
+                                "case",
                                 "dozen",
                               ].includes(line.billedUnit) && (
                                 <option value={line.billedUnit}>
@@ -724,6 +764,7 @@ export default function CaseDetail({
                                 "carton",
                                 "pack",
                                 "box",
+                                "case",
                                 "dozen",
                               ].map((unit) => (
                                 <option key={unit} value={unit}>
@@ -1302,6 +1343,9 @@ export default function CaseDetail({
           )}
         </section>
       )}
+      {tab === "revisions" && (
+        <RevisionHistory caseId={caseId} updatedAt={saved.updatedAt} />
+      )}
       {tab === "activity" && (
         <section className="panel activity-panel">
           <div className="panel-heading">
@@ -1427,9 +1471,9 @@ export default function CaseDetail({
           onClose={() => setExtraction(null)}
         >
           <p className="modal-description">
-            Extraction does not confirm received quantities. Applying these
-            suggestions replaces the current invoice lines, which you must
-            review and confirm.
+            Check quantities and units against the invoice. Unknown fields stay
+            blank until you fill them. Applying suggestions replaces the current
+            invoice lines; receiving counts still need your confirmation.
           </p>
           {extraction.warnings.length > 0 && (
             <div className="notice notice-warning">
@@ -1455,15 +1499,103 @@ export default function CaseDetail({
                 <tr>
                   <th>Description</th>
                   <th>Quantity</th>
+                  <th>Billed unit</th>
                   <th>Price / unit</th>
                 </tr>
               </thead>
               <tbody>
-                {extraction.lines.map((line) => (
+                {extraction.lines.map((line, index) => (
                   <tr key={line.id}>
-                    <td>{line.description}</td>
                     <td>
-                      {line.billedQty} {line.billedUnit}
+                      {line.description || (
+                        <span className="unknown-label">
+                          Description unknown
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        className="extraction-number"
+                        aria-label={`Suggested quantity for item ${index + 1}`}
+                        aria-invalid={line.billedQty == null}
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Unknown"
+                        value={line.billedQty ?? ""}
+                        onChange={(event) =>
+                          setExtraction({
+                            ...extraction,
+                            lines: extraction.lines.map((item) =>
+                              item.id === line.id
+                                ? {
+                                    ...item,
+                                    billedQty:
+                                      event.target.value === ""
+                                        ? null
+                                        : Number(event.target.value),
+                                    confirmed: false,
+                                  }
+                                : item,
+                            ),
+                          })
+                        }
+                      />
+                    </td>
+                    <td>
+                      <select
+                        aria-label={`Suggested unit for item ${index + 1}`}
+                        aria-invalid={line.billedUnit === "unknown"}
+                        value={line.billedUnit}
+                        onChange={(event) =>
+                          setExtraction({
+                            ...extraction,
+                            lines: extraction.lines.map((item) =>
+                              item.id === line.id
+                                ? {
+                                    ...item,
+                                    billedUnit: event.target.value,
+                                    packSize: null,
+                                    confirmed: false,
+                                  }
+                                : item,
+                            ),
+                          })
+                        }
+                      >
+                        <option value="unknown">Unknown — choose</option>
+                        {![
+                          "unknown",
+                          "piece",
+                          "unit",
+                          "bottle",
+                          "packet",
+                          "carton",
+                          "pack",
+                          "box",
+                          "case",
+                          "dozen",
+                        ].includes(line.billedUnit) && (
+                          <option value={line.billedUnit}>
+                            {line.billedUnit}
+                          </option>
+                        )}
+                        {[
+                          "piece",
+                          "unit",
+                          "bottle",
+                          "packet",
+                          "carton",
+                          "pack",
+                          "box",
+                          "case",
+                          "dozen",
+                        ].map((unit) => (
+                          <option key={unit} value={unit}>
+                            {unit}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td>{money(line.unitPriceMinor)}</td>
                   </tr>

@@ -46,6 +46,10 @@ import {
 import { ErrorBox, Modal, Spinner, Status, statusLabels } from "./ui";
 import CaseDetail from "./CaseDetail";
 import SupplierReview from "./SupplierReview";
+import WorkspaceSettings, {
+  RestoreWorkspace,
+  type WorkspaceAccessStatus,
+} from "./WorkspaceAccess";
 
 export default function App() {
   const [path, setPath] = useState(location.pathname);
@@ -58,6 +62,8 @@ export default function App() {
   const [sessionExpired, setSessionExpired] = useState(false);
   const [newCase, setNewCase] = useState(false);
   const [settings, setSettings] = useState(false);
+  const [restore, setRestore] = useState(false);
+  const [access, setAccess] = useState<WorkspaceAccessStatus | null>(null);
   const [toast, setToast] = useState("");
   const [busySample, setBusySample] = useState(false);
   const sessionPromise = useRef<Promise<Session> | null>(null);
@@ -120,6 +126,30 @@ export default function App() {
         if (active) {
           setSession(current);
           await loadCases(current.token);
+          const workspace = await api<WorkspaceAccessStatus>(
+            "/workspace",
+            {},
+            current.token,
+          );
+          if (!active) return;
+          setAccess(workspace);
+          if (
+            new Date(workspace.sessionExpiresAt).getTime() - Date.now() <
+            24 * 60 * 60 * 1000
+          ) {
+            const renewed = await post<Session>(
+              "/sessions/renew",
+              {},
+              current.token,
+            );
+            if (!active) return;
+            current = { ...renewed, name: current.name };
+            storeSession(current);
+            setSession(current);
+            setAccess(
+              await api<WorkspaceAccessStatus>("/workspace", {}, current.token),
+            );
+          }
         }
       } catch (e) {
         if (active) {
@@ -136,6 +166,106 @@ export default function App() {
       active = false;
     };
   }, [Boolean(supplierId)]);
+  useEffect(() => {
+    const expired = () => {
+      if (pathRef.current.startsWith("/cases/")) {
+        setRestore(true);
+        setError(
+          "Workspace access expired. Restore access with your recovery code to keep working.",
+        );
+      } else setSessionExpired(true);
+    };
+    window.addEventListener("receiverright:session-expired", expired);
+    return () =>
+      window.removeEventListener("receiverright:session-expired", expired);
+  }, []);
+  useEffect(() => {
+    if (!access || !session || sessionExpired || supplierId) return;
+    let active = true;
+    const delay = Math.max(
+      1000,
+      new Date(access.sessionExpiresAt).getTime() -
+        Date.now() -
+        24 * 60 * 60 * 1000,
+    );
+    const timer = setTimeout(async () => {
+      try {
+        const next = await post<Session>("/sessions/renew", {}, session.token);
+        if (!active || readSession()?.token !== session.token) return;
+        const current = { ...next, name: readSession()?.name || next.name };
+        storeSession(current);
+        setSession(current);
+        const workspace = await api<WorkspaceAccessStatus>(
+          "/workspace",
+          {},
+          current.token,
+        );
+        if (readSession()?.token === current.token) setAccess(workspace);
+      } catch {
+        // Authentication failures display the restore screen through the API event.
+      }
+    }, delay);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [
+    access?.sessionExpiresAt,
+    session?.token,
+    sessionExpired,
+    Boolean(supplierId),
+  ]);
+  async function changeWorkspace(next: Session) {
+    if (session?.workspaceId === next.workspaceId) {
+      const workspace =
+        next.token !== session.token
+          ? await api<WorkspaceAccessStatus>("/workspace", {}, next.token)
+          : access;
+      if (sessionExpired) await loadCases(next.token);
+      storeSession(next);
+      setSession(next);
+      setAccess(workspace);
+      setSettings(false);
+      setRestore(false);
+      setSessionExpired(false);
+      setError("");
+      setToast(
+        next.token !== session.token
+          ? "Workspace access restored. Your record stays open."
+          : "Workspace preferences saved.",
+      );
+      return;
+    }
+    const navigation = new CustomEvent("receiverright:navigate", {
+      detail: { to: "/", probe: true },
+      cancelable: true,
+    });
+    window.dispatchEvent(navigation);
+    if (navigation.defaultPrevented)
+      throw new Error(
+        "Save or discard your current record changes before switching workspaces.",
+      );
+    const result = await api<{ cases: ReceivingCase[] }>(
+      "/cases",
+      {},
+      next.token,
+    );
+    const workspace = await api<WorkspaceAccessStatus>(
+      "/workspace",
+      {},
+      next.token,
+    );
+    storeSession(next);
+    setSession(next);
+    setCases(result.cases);
+    setAccess(workspace);
+    setSessionExpired(false);
+    setError("");
+    setSettings(false);
+    setRestore(false);
+    navigate("/", true);
+    setToast("Workspace opened. Your saved records are ready.");
+  }
   const navigate = (to: string, discardConfirmed = false) => {
     if (!discardConfirmed) {
       const navigation = new CustomEvent("receiverright:navigate", {
@@ -163,8 +293,14 @@ export default function App() {
         { name: session?.name || "My store" },
         "",
       );
+      const workspace = await api<WorkspaceAccessStatus>(
+        "/workspace",
+        {},
+        next.token,
+      );
       storeSession(next);
       setSession(next);
+      setAccess(workspace);
       setCases([]);
       setSessionExpired(false);
       setError("");
@@ -316,6 +452,25 @@ export default function App() {
           id="main-content"
           className={caseId ? "content detail-content" : "content"}
         >
+          {!loading &&
+            !sessionExpired &&
+            access &&
+            !access.recoveryEnabled &&
+            !caseId && (
+              <div className="workspace-reminder">
+                <ShieldCheck size={18} />
+                <div>
+                  <strong>Keep your records within reach.</strong>
+                  <span>Save a recovery code to return on another device.</span>
+                </div>
+                <button
+                  className="text-button"
+                  onClick={() => setSettings(true)}
+                >
+                  Set up recovery <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
           {loading ? (
             <LoadingPage />
           ) : sessionExpired ? (
@@ -323,16 +478,25 @@ export default function App() {
               <ShieldCheck size={30} />
               <h2>Your workspace access has expired.</h2>
               <p>
-                Workspace access lasts seven days. You can start a new empty
-                workspace; this does not recover the previous records.
+                Restore your saved records with your recovery code. If you have
+                another connected device, create a code in its Workspace
+                settings first.
               </p>
               <ErrorBox error={error} />
-              <button
-                className="button button-primary"
-                onClick={startAfterExpiry}
-              >
-                Start a new workspace <ArrowRight size={16} />
-              </button>
+              <div className="button-row">
+                <button
+                  className="button button-primary"
+                  onClick={() => setRestore(true)}
+                >
+                  Restore my workspace <ArrowRight size={16} />
+                </button>
+                <button
+                  className="button button-secondary"
+                  onClick={startAfterExpiry}
+                >
+                  Start an empty workspace
+                </button>
+              </div>
             </section>
           ) : error && !session ? (
             <ErrorBox error={error} retry={() => location.reload()} />
@@ -424,16 +588,18 @@ export default function App() {
         <WorkspaceSettings
           session={session}
           onClose={() => setSettings(false)}
-          onChange={async (next) => {
-            storeSession(next);
-            setSession(next);
-            setSessionExpired(false);
-            setError("");
-            await loadCases(next.token);
-            navigate("/");
+          onChange={changeWorkspace}
+          onAccessChange={setAccess}
+          onRestore={() => {
             setSettings(false);
-            setToast("Workspace updated.");
+            setRestore(true);
           }}
+        />
+      )}
+      {restore && (
+        <RestoreWorkspace
+          onClose={() => setRestore(false)}
+          onRestored={changeWorkspace}
         />
       )}
       {toast && (
@@ -1084,126 +1250,6 @@ function NewCase({
           </button>
         </div>
       )}
-    </Modal>
-  );
-}
-
-function WorkspaceSettings({
-  session,
-  onClose,
-  onChange,
-}: {
-  session: Session | null;
-  onClose: () => void;
-  onChange: (session: Session) => Promise<void>;
-}) {
-  const [name, setName] = useState(session?.name || "My store");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const [confirmNew, setConfirmNew] = useState(false);
-  return (
-    <Modal
-      title="Make this desk yours."
-      eyebrow="WORKSPACE SETTINGS"
-      onClose={onClose}
-    >
-      <p className="modal-description">
-        This browser holds the access key to your private receiving workspace.
-        Keep it on a device you trust.
-      </p>
-      <label className="full-label">
-        Workspace display name
-        <input
-          maxLength={80}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      <p className="field-hint">
-        The display name is saved on this browser. Existing records keep their
-        original shop name.
-      </p>
-      <div className="settings-id">
-        <ShieldCheck size={18} />
-        <div>
-          <strong>Private browser workspace</strong>
-          <small>{session?.workspaceId}</small>
-        </div>
-      </div>
-      <div className="notice">
-        <CircleHelp size={18} />
-        <p>
-          This version uses a browser access key, not a recoverable account.
-          Clearing your browser data removes access. Export important records
-          before changing devices.
-        </p>
-      </div>
-      {error && <ErrorBox error={error} />}
-      <div className="modal-actions">
-        <button className="button button-secondary" onClick={onClose}>
-          Cancel
-        </button>
-        <button
-          className="button button-primary"
-          disabled={!name.trim() || busy}
-          onClick={async () => {
-            if (!session) return;
-            setBusy(true);
-            try {
-              await onChange({ ...session, name: name.trim() });
-            } catch (e) {
-              setError(errorMessage(e));
-            } finally {
-              setBusy(false);
-            }
-          }}
-        >
-          <Check size={16} />
-          Save preferences
-        </button>
-      </div>
-      <div className="settings-new">
-        <h3>Start a separate workspace</h3>
-        <p>
-          This creates a new empty workspace. Current records stay stored, but
-          this browser will switch to the new access key.
-        </p>
-        {confirmNew ? (
-          <div className="button-row">
-            <button
-              className="button button-danger"
-              disabled={busy}
-              onClick={async () => {
-                setBusy(true);
-                try {
-                  await onChange(
-                    await post<Session>("/sessions", {
-                      name: name.trim() || "My store",
-                    }),
-                  );
-                } catch (e) {
-                  setError(errorMessage(e));
-                } finally {
-                  setBusy(false);
-                }
-              }}
-            >
-              {busy ? "Creating…" : "Create and switch workspace"}
-            </button>
-            <button
-              className="text-button"
-              onClick={() => setConfirmNew(false)}
-            >
-              Keep this workspace
-            </button>
-          </div>
-        ) : (
-          <button className="text-button" onClick={() => setConfirmNew(true)}>
-            <Plus size={15} />
-            Create another workspace
-          </button>
-        )}
-      </div>
     </Modal>
   );
 }
