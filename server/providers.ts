@@ -15,6 +15,7 @@ export class UploadProblem extends Error {}
 
 export class Providers {
   readonly bucket = process.env.EVIDENCE_BUCKET;
+  readonly textractEnabled = !!this.bucket && process.env.TEXTRACT_ENABLED !== 'false';
   readonly model = process.env.BEDROCK_MODEL_ID;
   // A presigned upload has no server-side Body. Do not sign an empty-body CRC32
   // for bytes that the browser will supply later; content length is signed below.
@@ -56,7 +57,7 @@ export class Providers {
     return {bytes:await readFile(path.join(this.dataDir,'uploads',record.key.split('/').at(-1)!))};
   }
   async extract(record:EvidenceRecord):Promise<ExtractionResult> {
-    if (!this.bucket) throw new UploadProblem('AWS Textract is not configured. Enter the invoice manually, or connect an AWS deployment.');
+    if (!this.textractEnabled) throw new UploadProblem('AWS Textract is not enabled. Enter the invoice manually until service access has been verified.');
     const result = await this.textract.send(new AnalyzeExpenseCommand({Document:{S3Object:{Bucket:this.bucket,Name:record.key,Version:record.versionId}}}));
     const document = result.ExpenseDocuments?.[0];
     const summary = (type:string) => document?.SummaryFields?.find(f=>f.Type?.Text===type)?.ValueDetection?.Text ?? '';

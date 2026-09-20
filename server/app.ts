@@ -73,7 +73,7 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     throw new HttpError(429,'The AI provider is busy. Please retry shortly.');
   };
 
-  app.get('/api/health',(_req,res)=>res.json({status:'ok',storage:store.kind,extraction:providers.bucket ? 'textract' : 'manual',summaries:providers.model ? 'bedrock' : 'template',version:'1.0.0',...(process.env.AWS_REGION ? {region:process.env.AWS_REGION} : {})}));
+  app.get('/api/health',(_req,res)=>res.json({status:'ok',storage:store.kind,extraction:providers.textractEnabled ? 'textract' : 'manual',summaries:providers.model ? 'bedrock' : 'template',version:'1.0.0',...(process.env.AWS_REGION ? {region:process.env.AWS_REGION} : {})}));
   app.post('/api/sessions',rateLimit({windowMs:60_000,limit:12,standardHeaders:false,legacyHeaders:false,message:{error:'Please wait before creating another workspace.'}}),async(req,res)=>{
     const body = z.object({name:z.string().trim().max(80).optional()}).strict().parse(req.body);
     const access = token(); const workspaceId = randomUUID(); const expiresAt=seconds()+7*24*3600; const name=body.name || 'Receiver';
@@ -173,7 +173,7 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
   });
   app.post('/api/cases/:id/extract',async(req,res)=>{
     const {evidenceId}=z.object({evidenceId:id}).strict().parse(req.body); const stored=await caseForRequest(req,res); checkEditable(stored.value);
-    if(!providers.bucket) throw new HttpError(503,'AWS Textract is not configured. Manual invoice entry is available.','TEXTRACT_UNAVAILABLE');
+    if(!providers.textractEnabled) throw new HttpError(503,'AWS Textract is not enabled. Manual invoice entry is available.','TEXTRACT_UNAVAILABLE');
     const evidence=await store.get<EvidenceRecord>('EVIDENCE',evidenceId);
     if(!evidence || evidence.value.caseId!==stored.value.id || evidence.value.workspaceId!==res.locals.receiver.workspaceId || !stored.value.evidence.some(e=>e.id===evidenceId)) throw new HttpError(404,'Invoice evidence not found.');
     if(evidence.value.evidence.kind!=='invoice') throw new HttpError(422,'Select an invoice document for extraction.');
