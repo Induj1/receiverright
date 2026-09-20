@@ -1,0 +1,67 @@
+{
+  "startedAt": "2026-09-20T12:11:08.155Z",
+  "deploymentOrigin": "https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com",
+  "checks": [
+    {
+      "name": "health",
+      "status": "ok",
+      "storage": "dynamodb",
+      "extraction": "textract",
+      "summaries": "template",
+      "version": "1.0.0",
+      "region": "ap-south-1"
+    },
+    {
+      "name": "isolated synthetic workspace",
+      "status": "passed"
+    },
+    {
+      "name": "confirmed pack conversion",
+      "status": "passed"
+    },
+    {
+      "name": "supplier review and response",
+      "status": "passed"
+    },
+    {
+      "name": "acknowledged closure",
+      "status": "passed"
+    },
+    {
+      "name": "JSON and CSV exports",
+      "status": "passed",
+      "expectedSyntheticDiscrepancyMinor": 28000
+    },
+    {
+      "name": "private invoice upload and authorized read",
+      "status": "passed",
+      "bytes": 246251
+    }
+  ],
+  "providers": {
+    "textract": {
+      "status": "passed",
+      "provider": "textract",
+      "actualExtractedLineCount": 3,
+      "warningCount": 1,
+      "hasSupplier": true,
+      "hasInvoiceNumber": true
+    },
+    "summary": {
+      "status": "passed",
+      "provider": "template",
+      "characters": 302
+    }
+  },
+  "passed": true,
+  "health": {
+    "status": "ok",
+    "storage": "dynamodb",
+    "extraction": "textract",
+    "summaries": "template",
+    "version": "1.0.0",
+    "region": "ap-south-1"
+  },
+  "corePassed": true,
+  "completedAt": "2026-09-20T12:11:18.264Z"
+}

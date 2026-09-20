@@ -6,6 +6,7 @@ dist/
 .data/
 .artifacts/
 tmp/
+output/video/
 coverage/
 deployment-outputs.json
 *.log
