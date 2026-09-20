@@ -12,6 +12,7 @@ export default {
   Parameters: {
     CodeBucket: { Type: 'String' }, CodeKey: { Type: 'String' },
     BedrockModel: { Type: 'String', Default: '' },
+    TextractEnabled: { Type: 'String', Default: 'false', AllowedValues: ['true', 'false'] },
     MaxDailyAiCalls: { Type: 'Number', Default: 50, MinValue: 0, MaxValue: 500 }
   },
   Resources: {
@@ -38,7 +39,7 @@ export default {
     ApiFunction: { Type: 'AWS::Lambda::Function', Properties: {
       Runtime: 'nodejs22.x', Handler: 'index.handler', Architectures: ['arm64'], MemorySize: 512, Timeout: 29,
       Role: att('ExecutionRole', 'Arn'), Code: { S3Bucket: ref('CodeBucket'), S3Key: ref('CodeKey') },
-      Environment: { Variables: { NODE_ENV: 'production', TABLE_NAME: ref('Records'), EVIDENCE_BUCKET: ref('EvidenceBucket'), BEDROCK_MODEL_ID: ref('BedrockModel'), MAX_DAILY_AI_CALLS: ref('MaxDailyAiCalls') } }
+      Environment: { Variables: { NODE_ENV: 'production', TABLE_NAME: ref('Records'), EVIDENCE_BUCKET: ref('EvidenceBucket'), TEXTRACT_ENABLED: ref('TextractEnabled'), BEDROCK_MODEL_ID: ref('BedrockModel'), MAX_DAILY_AI_CALLS: ref('MaxDailyAiCalls') } }
     } },
     ApiLogs: { Type: 'AWS::Logs::LogGroup', Properties: { LogGroupName: sub('/aws/lambda/${ApiFunction}'), RetentionInDays: 7 } },
     Api: { Type: 'AWS::ApiGatewayV2::Api', Properties: { Name: sub('${AWS::StackName}-api'), ProtocolType: 'HTTP' } },

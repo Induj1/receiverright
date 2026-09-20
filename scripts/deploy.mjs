@@ -27,7 +27,7 @@ const bytes = await readFile('.artifacts/lambda.zip');
 const key = `lambda/${createHash('sha256').update(bytes).digest('hex').slice(0,20)}.zip`;
 aws('s3', 'cp', '.artifacts/lambda.zip', `s3://${bucket}/${key}`, '--sse', 'AES256', '--only-show-errors');
 console.log(`Deploying ${stack} to ${region}…`);
-console.log(aws('cloudformation', 'deploy', '--stack-name', stack, '--template-file', '.artifacts/template.json', '--capabilities', 'CAPABILITY_IAM', '--no-fail-on-empty-changeset', '--parameter-overrides', `CodeBucket=${bucket}`, `CodeKey=${key}`, `BedrockModel=${process.env.BEDROCK_MODEL_ID || ''}`, `MaxDailyAiCalls=${process.env.MAX_DAILY_AI_CALLS || '50'}`));
+console.log(aws('cloudformation', 'deploy', '--stack-name', stack, '--template-file', '.artifacts/template.json', '--capabilities', 'CAPABILITY_IAM', '--no-fail-on-empty-changeset', '--parameter-overrides', `CodeBucket=${bucket}`, `CodeKey=${key}`, `BedrockModel=${process.env.BEDROCK_MODEL_ID || ''}`, `TextractEnabled=${process.env.TEXTRACT_ENABLED || 'false'}`, `MaxDailyAiCalls=${process.env.MAX_DAILY_AI_CALLS || '50'}`));
 const resources = JSON.parse(aws('cloudformation', 'describe-stacks', '--stack-name', stack, '--query', 'Stacks[0].Outputs', '--output', 'json'));
 const outputs = Object.fromEntries(resources.map(o => [o.OutputKey, o.OutputValue]));
 await writeFile('deployment-outputs.json', JSON.stringify({ ...outputs, region, stack }, null, 2));
