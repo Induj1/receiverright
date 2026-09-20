@@ -1,0 +1,483 @@
+[
+  {
+    "product": {
+      "productFamily": "API Request",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonTextract",
+        "groupDescription": "Number of pages processed using AnalyzeExpense",
+        "entityType": "Expense",
+        "usagetype": "APS3-SyncExpensePagesProcessed",
+        "platopagedatatype": "SyncExpensePagesProcessed",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Textract",
+        "operation": "",
+        "apiType": "Sync AnalyzeExpense",
+        "group": "Textract Analyze Expense API Requests"
+      },
+      "sku": "ETCT9DUKSR7RDPMH"
+    },
+    "serviceCode": "AmazonTextract",
+    "terms": {
+      "OnDemand": {
+        "ETCT9DUKSR7RDPMH.JRTCKXETXF": {
+          "priceDimensions": {
+            "ETCT9DUKSR7RDPMH.JRTCKXETXF.SB2VSFF4TP": {
+              "unit": "Pages",
+              "endRange": "1000000",
+              "description": "$0.01 per Pages for SyncExpensePagesProcessed in Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "ETCT9DUKSR7RDPMH.JRTCKXETXF.SB2VSFF4TP",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0100000000"
+              }
+            },
+            "ETCT9DUKSR7RDPMH.JRTCKXETXF.VNJQCFJPS4": {
+              "unit": "Pages",
+              "endRange": "Inf",
+              "description": "$0.008 per Pages for SyncExpensePagesProcessed in Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "ETCT9DUKSR7RDPMH.JRTCKXETXF.VNJQCFJPS4",
+              "beginRange": "1000000",
+              "pricePerUnit": {
+                "USD": "0.0080000000"
+              }
+            }
+          },
+          "sku": "ETCT9DUKSR7RDPMH",
+          "effectiveDate": "2024-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124513",
+    "publicationDate": "2026-09-11T12:45:13Z"
+  },
+  {
+    "product": {
+      "productFamily": "API Request",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonTextract",
+        "groupDescription": "Number of pages processed using AnalyzeExpense",
+        "entityType": "Expense",
+        "usagetype": "APS3-AsyncExpensePagesProcessed",
+        "platopagedatatype": "AsyncExpensePagesProcessed",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Textract",
+        "operation": "",
+        "apiType": "Async",
+        "group": "Textract Analyze Expense API Requests"
+      },
+      "sku": "HWYDZ5E4UNW3HYZR"
+    },
+    "serviceCode": "AmazonTextract",
+    "terms": {
+      "OnDemand": {
+        "HWYDZ5E4UNW3HYZR.JRTCKXETXF": {
+          "priceDimensions": {
+            "HWYDZ5E4UNW3HYZR.JRTCKXETXF.VNJQCFJPS4": {
+              "unit": "Pages",
+              "endRange": "Inf",
+              "description": "$0.008 per API Requests for AsyncExpensePagesProcessed in Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "HWYDZ5E4UNW3HYZR.JRTCKXETXF.VNJQCFJPS4",
+              "beginRange": "1000000",
+              "pricePerUnit": {
+                "USD": "0.0080000000"
+              }
+            },
+            "HWYDZ5E4UNW3HYZR.JRTCKXETXF.SB2VSFF4TP": {
+              "unit": "Pages",
+              "endRange": "1000000",
+              "description": "$0.01 per API Requests for AsyncExpensePagesProcessed in Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "HWYDZ5E4UNW3HYZR.JRTCKXETXF.SB2VSFF4TP",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0100000000"
+              }
+            }
+          },
+          "sku": "HWYDZ5E4UNW3HYZR",
+          "effectiveDate": "2024-10-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124513",
+    "publicationDate": "2026-09-11T12:45:13Z"
+  },
+  {
+    "product": {
+      "productFamily": "Serverless",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AWSLambda",
+        "groupDescription": "Invocation duration weighted by memory assigned to function, measured in GB-s for ARM",
+        "usagetype": "APS3-Lambda-GB-Second-ARM",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "AWS Lambda",
+        "operation": "",
+        "group": "AWS-Lambda-Duration-ARM"
+      },
+      "sku": "69Y7TUFYEF9HAV59"
+    },
+    "serviceCode": "AWSLambda",
+    "terms": {
+      "OnDemand": {
+        "69Y7TUFYEF9HAV59.JRTCKXETXF": {
+          "priceDimensions": {
+            "69Y7TUFYEF9HAV59.JRTCKXETXF.6JGAYSJBNY": {
+              "unit": "Lambda-GB-Second",
+              "endRange": "18750000000",
+              "description": "AWS Lambda - Total Compute for ARM - Asia Pacific (Mumbai)-Tier-2",
+              "appliesTo": [],
+              "rateCode": "69Y7TUFYEF9HAV59.JRTCKXETXF.6JGAYSJBNY",
+              "beginRange": "7500000000",
+              "pricePerUnit": {
+                "USD": "0.0000120001"
+              }
+            },
+            "69Y7TUFYEF9HAV59.JRTCKXETXF.AVR3V96UTF": {
+              "unit": "Lambda-GB-Second",
+              "endRange": "Inf",
+              "description": "AWS Lambda - Total Compute for ARM - Asia Pacific (Mumbai)-Tier-3",
+              "appliesTo": [],
+              "rateCode": "69Y7TUFYEF9HAV59.JRTCKXETXF.AVR3V96UTF",
+              "beginRange": "18750000000",
+              "pricePerUnit": {
+                "USD": "0.0000106667"
+              }
+            },
+            "69Y7TUFYEF9HAV59.JRTCKXETXF.6NBUNBXSC3": {
+              "unit": "Lambda-GB-Second",
+              "endRange": "7500000000",
+              "description": "AWS Lambda - Total Compute for ARM - Asia Pacific (Mumbai)-Tier-1",
+              "appliesTo": [],
+              "rateCode": "69Y7TUFYEF9HAV59.JRTCKXETXF.6NBUNBXSC3",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000133334"
+              }
+            }
+          },
+          "sku": "69Y7TUFYEF9HAV59",
+          "effectiveDate": "2026-09-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260919002359",
+    "publicationDate": "2026-09-19T00:23:59Z"
+  },
+  {
+    "product": {
+      "productFamily": "Serverless",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AWSLambda",
+        "groupDescription": "Invocation call for a Lambda function",
+        "usagetype": "APS3-Request",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "AWS Lambda",
+        "operation": "",
+        "group": "AWS-Lambda-Requests"
+      },
+      "sku": "VPGUBFQ4KNZKMKGJ"
+    },
+    "serviceCode": "AWSLambda",
+    "terms": {
+      "OnDemand": {
+        "VPGUBFQ4KNZKMKGJ.JRTCKXETXF": {
+          "priceDimensions": {
+            "VPGUBFQ4KNZKMKGJ.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "Request",
+              "endRange": "Inf",
+              "description": "AWS Lambda - Total Requests - Asia Pacific (Mumbai)",
+              "appliesTo": [],
+              "rateCode": "VPGUBFQ4KNZKMKGJ.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000002000"
+              }
+            }
+          },
+          "sku": "VPGUBFQ4KNZKMKGJ",
+          "effectiveDate": "2026-09-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260919002359",
+    "publicationDate": "2026-09-19T00:23:59Z"
+  },
+  {
+    "product": {
+      "productFamily": "API Calls",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonApiGateway",
+        "usagetype": "APS3-ApiGatewayHttpRequest",
+        "description": "HTTP API Requests",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon API Gateway",
+        "operation": "ApiGatewayHttpApi"
+      },
+      "sku": "S2BWD3VP3K4M5Q9P"
+    },
+    "serviceCode": "AmazonApiGateway",
+    "terms": {
+      "OnDemand": {
+        "S2BWD3VP3K4M5Q9P.JRTCKXETXF": {
+          "priceDimensions": {
+            "S2BWD3VP3K4M5Q9P.JRTCKXETXF.9NXBCPDZYR": {
+              "unit": "Requests",
+              "endRange": "300000000",
+              "description": "$1.05/million requests - API Gateway HTTP API (first 300 million)",
+              "appliesTo": [],
+              "rateCode": "S2BWD3VP3K4M5Q9P.JRTCKXETXF.9NXBCPDZYR",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000010500"
+              }
+            },
+            "S2BWD3VP3K4M5Q9P.JRTCKXETXF.Y5DREYKEMT": {
+              "unit": "Requests",
+              "endRange": "Inf",
+              "description": "$0.95/million requests - API Gateway HTTP API (more than 300 million)",
+              "appliesTo": [],
+              "rateCode": "S2BWD3VP3K4M5Q9P.JRTCKXETXF.Y5DREYKEMT",
+              "beginRange": "300000000",
+              "pricePerUnit": {
+                "USD": "0.0000009500"
+              }
+            }
+          },
+          "sku": "S2BWD3VP3K4M5Q9P",
+          "effectiveDate": "2025-11-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124408",
+    "publicationDate": "2026-09-11T12:44:08Z"
+  },
+  {
+    "product": {
+      "productFamily": "Database Storage",
+      "attributes": {
+        "volumeType": "Amazon DynamoDB - Indexed DataStore",
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonDynamoDB",
+        "usagetype": "APS3-TimedStorage-ByteHrs",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon DynamoDB",
+        "operation": ""
+      },
+      "sku": "8Q6HK3ASV67MN388"
+    },
+    "serviceCode": "AmazonDynamoDB",
+    "terms": {
+      "OnDemand": {
+        "8Q6HK3ASV67MN388.JRTCKXETXF": {
+          "priceDimensions": {
+            "8Q6HK3ASV67MN388.JRTCKXETXF.VYAP54KATQ": {
+              "unit": "GB-Mo",
+              "endRange": "Inf",
+              "description": "$0.285 per GB-Month of storage used beyond first 25 free GB-Months",
+              "appliesTo": [],
+              "rateCode": "8Q6HK3ASV67MN388.JRTCKXETXF.VYAP54KATQ",
+              "beginRange": "25",
+              "pricePerUnit": {
+                "USD": "0.2850000000"
+              }
+            },
+            "8Q6HK3ASV67MN388.JRTCKXETXF.G2A93NZ7DT": {
+              "unit": "GB-Mo",
+              "endRange": "25",
+              "description": "$0.00 per GB-Month of storage for first 25 free GB-Months",
+              "appliesTo": [],
+              "rateCode": "8Q6HK3ASV67MN388.JRTCKXETXF.G2A93NZ7DT",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000000000"
+              }
+            }
+          },
+          "sku": "8Q6HK3ASV67MN388",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124422",
+    "publicationDate": "2026-09-11T12:44:22Z"
+  },
+  {
+    "product": {
+      "productFamily": "Amazon DynamoDB PayPerRequest Throughput",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonDynamoDB",
+        "groupDescription": "DynamoDB PayPerRequest Write Request Units",
+        "usagetype": "APS3-WriteRequestUnits",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon DynamoDB",
+        "operation": "PayPerRequestThroughput",
+        "group": "DDB-WriteUnits"
+      },
+      "sku": "A5DP2X4YSZ84WEJA"
+    },
+    "serviceCode": "AmazonDynamoDB",
+    "terms": {
+      "OnDemand": {
+        "A5DP2X4YSZ84WEJA.JRTCKXETXF": {
+          "priceDimensions": {
+            "A5DP2X4YSZ84WEJA.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "WriteRequestUnits",
+              "endRange": "Inf",
+              "description": "$0.71 per million write request units (Asia Pacific (India))",
+              "appliesTo": [],
+              "rateCode": "A5DP2X4YSZ84WEJA.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000007100"
+              }
+            }
+          },
+          "sku": "A5DP2X4YSZ84WEJA",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124422",
+    "publicationDate": "2026-09-11T12:44:22Z"
+  },
+  {
+    "product": {
+      "productFamily": "Amazon DynamoDB PayPerRequest Throughput",
+      "attributes": {
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonDynamoDB",
+        "groupDescription": "DynamoDB PayPerRequest Read Request Units",
+        "usagetype": "APS3-ReadRequestUnits",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon DynamoDB",
+        "operation": "PayPerRequestThroughput",
+        "group": "DDB-ReadUnits"
+      },
+      "sku": "HQZY4ZFUTRDPV7ZE"
+    },
+    "serviceCode": "AmazonDynamoDB",
+    "terms": {
+      "OnDemand": {
+        "HQZY4ZFUTRDPV7ZE.JRTCKXETXF": {
+          "priceDimensions": {
+            "HQZY4ZFUTRDPV7ZE.JRTCKXETXF.6YS6EN2CT7": {
+              "unit": "ReadRequestUnits",
+              "endRange": "Inf",
+              "description": "$0.1425 per million read request units (Asia Pacific (India))",
+              "appliesTo": [],
+              "rateCode": "HQZY4ZFUTRDPV7ZE.JRTCKXETXF.6YS6EN2CT7",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0000001425"
+              }
+            }
+          },
+          "sku": "HQZY4ZFUTRDPV7ZE",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260911124422",
+    "publicationDate": "2026-09-11T12:44:22Z"
+  },
+  {
+    "product": {
+      "productFamily": "Storage",
+      "attributes": {
+        "volumeType": "Standard",
+        "storageClass": "General Purpose",
+        "regionCode": "ap-south-1",
+        "servicecode": "AmazonS3",
+        "durability": "99.999999999%",
+        "usagetype": "APS3-TimedStorage-ByteHrs",
+        "locationType": "AWS Region",
+        "location": "Asia Pacific (Mumbai)",
+        "servicename": "Amazon Simple Storage Service",
+        "availability": "99.99%",
+        "operation": ""
+      },
+      "sku": "USGUTP2JY23N9GH2"
+    },
+    "serviceCode": "AmazonS3",
+    "terms": {
+      "OnDemand": {
+        "USGUTP2JY23N9GH2.JRTCKXETXF": {
+          "priceDimensions": {
+            "USGUTP2JY23N9GH2.JRTCKXETXF.D42MF2PVJS": {
+              "unit": "GB-Mo",
+              "endRange": "512000",
+              "description": "$0.024 per GB - next 450 TB / month of storage used",
+              "appliesTo": [],
+              "rateCode": "USGUTP2JY23N9GH2.JRTCKXETXF.D42MF2PVJS",
+              "beginRange": "51200",
+              "pricePerUnit": {
+                "USD": "0.0240000000"
+              }
+            },
+            "USGUTP2JY23N9GH2.JRTCKXETXF.PXJDJ3YRG3": {
+              "unit": "GB-Mo",
+              "endRange": "Inf",
+              "description": "$0.023 per GB - storage used / month over 500 TB",
+              "appliesTo": [],
+              "rateCode": "USGUTP2JY23N9GH2.JRTCKXETXF.PXJDJ3YRG3",
+              "beginRange": "512000",
+              "pricePerUnit": {
+                "USD": "0.0230000000"
+              }
+            },
+            "USGUTP2JY23N9GH2.JRTCKXETXF.PGHJ3S3EYE": {
+              "unit": "GB-Mo",
+              "endRange": "51200",
+              "description": "$0.025 per GB - first 50 TB / month of storage used",
+              "appliesTo": [],
+              "rateCode": "USGUTP2JY23N9GH2.JRTCKXETXF.PGHJ3S3EYE",
+              "beginRange": "0",
+              "pricePerUnit": {
+                "USD": "0.0250000000"
+              }
+            }
+          },
+          "sku": "USGUTP2JY23N9GH2",
+          "effectiveDate": "2026-09-01T00:00:00Z",
+          "offerTermCode": "JRTCKXETXF",
+          "termAttributes": {}
+        }
+      }
+    },
+    "version": "20260918174747",
+    "publicationDate": "2026-09-18T17:47:47Z"
+  }
+]

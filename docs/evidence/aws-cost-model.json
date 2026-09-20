@@ -1,0 +1,131 @@
+{
+  "retrievedAt": "2026-09-20T13:18:20.870Z",
+  "region": "ap-south-1",
+  "currency": "USD",
+  "source": "AWS Price List Query API, OnDemand rates",
+  "classification": "Modeled core-service subtotal using explicit assumptions; not measured cost or full account bill",
+  "rates": {
+    "textract": {
+      "service": "AmazonTextract",
+      "usageType": "APS3-SyncExpensePagesProcessed",
+      "usdPerUnit": 0.01,
+      "unit": "Pages",
+      "sku": "ETCT9DUKSR7RDPMH",
+      "rateCode": "ETCT9DUKSR7RDPMH.JRTCKXETXF.SB2VSFF4TP",
+      "description": "$0.01 per Pages for SyncExpensePagesProcessed in Asia Pacific (Mumbai)",
+      "publicationDate": "2026-09-11T12:45:13Z"
+    },
+    "lambdaDuration": {
+      "service": "AWSLambda",
+      "usageType": "APS3-Lambda-GB-Second-ARM",
+      "usdPerUnit": 0.0000133334,
+      "unit": "Lambda-GB-Second",
+      "sku": "69Y7TUFYEF9HAV59",
+      "rateCode": "69Y7TUFYEF9HAV59.JRTCKXETXF.6NBUNBXSC3",
+      "description": "AWS Lambda - Total Compute for ARM - Asia Pacific (Mumbai)-Tier-1",
+      "publicationDate": "2026-09-19T00:23:59Z"
+    },
+    "lambdaRequest": {
+      "service": "AWSLambda",
+      "usageType": "APS3-Request",
+      "usdPerUnit": 2e-7,
+      "unit": "Request",
+      "sku": "VPGUBFQ4KNZKMKGJ",
+      "rateCode": "VPGUBFQ4KNZKMKGJ.JRTCKXETXF.6YS6EN2CT7",
+      "description": "AWS Lambda - Total Requests - Asia Pacific (Mumbai)",
+      "publicationDate": "2026-09-19T00:23:59Z"
+    },
+    "httpApi": {
+      "service": "AmazonApiGateway",
+      "usageType": "APS3-ApiGatewayHttpRequest",
+      "usdPerUnit": 0.00000105,
+      "unit": "Requests",
+      "sku": "S2BWD3VP3K4M5Q9P",
+      "rateCode": "S2BWD3VP3K4M5Q9P.JRTCKXETXF.9NXBCPDZYR",
+      "description": "$1.05/million requests - API Gateway HTTP API (first 300 million)",
+      "publicationDate": "2026-09-11T12:44:08Z"
+    },
+    "dynamoWrite": {
+      "service": "AmazonDynamoDB",
+      "usageType": "APS3-WriteRequestUnits",
+      "usdPerUnit": 7.1e-7,
+      "unit": "WriteRequestUnits",
+      "sku": "A5DP2X4YSZ84WEJA",
+      "rateCode": "A5DP2X4YSZ84WEJA.JRTCKXETXF.6YS6EN2CT7",
+      "description": "$0.71 per million write request units (Asia Pacific (India))",
+      "publicationDate": "2026-09-11T12:44:22Z"
+    },
+    "dynamoRead": {
+      "service": "AmazonDynamoDB",
+      "usageType": "APS3-ReadRequestUnits",
+      "usdPerUnit": 1.425e-7,
+      "unit": "ReadRequestUnits",
+      "sku": "HQZY4ZFUTRDPV7ZE",
+      "rateCode": "HQZY4ZFUTRDPV7ZE.JRTCKXETXF.6YS6EN2CT7",
+      "description": "$0.1425 per million read request units (Asia Pacific (India))",
+      "publicationDate": "2026-09-11T12:44:22Z"
+    },
+    "dynamoStorage": {
+      "service": "AmazonDynamoDB",
+      "usageType": "APS3-TimedStorage-ByteHrs",
+      "usdPerUnit": 0.285,
+      "unit": "GB-Mo",
+      "sku": "8Q6HK3ASV67MN388",
+      "rateCode": "8Q6HK3ASV67MN388.JRTCKXETXF.VYAP54KATQ",
+      "description": "$0.285 per GB-Month of storage used beyond first 25 free GB-Months",
+      "publicationDate": "2026-09-11T12:44:22Z"
+    },
+    "s3Storage": {
+      "service": "AmazonS3",
+      "usageType": "APS3-TimedStorage-ByteHrs",
+      "usdPerUnit": 0.025,
+      "unit": "GB-Mo",
+      "sku": "USGUTP2JY23N9GH2",
+      "rateCode": "USGUTP2JY23N9GH2.JRTCKXETXF.PGHJ3S3EYE",
+      "description": "$0.025 per GB - first 50 TB / month of storage used",
+      "publicationDate": "2026-09-18T17:47:47Z"
+    }
+  },
+  "assumptions": {
+    "invoices": 1000,
+    "pagesPerInvoice": 1,
+    "httpRequestsPerInvoice": 30,
+    "lambdaInvocationsPerInvoice": 30,
+    "lambdaGBSecondsPerInvoice": 6,
+    "dynamoWriteUnitsPerInvoice": 200,
+    "dynamoReadUnitsPerInvoice": 100,
+    "s3GBMonthsPerInvoice": 0.002,
+    "dynamoGBMonthsPerInvoice": 0.0001
+  },
+  "perInvoice": {
+    "textract": 0.01,
+    "api": 0.0000315,
+    "lambdaRequests": 0.000006,
+    "lambdaCompute": 0.0000800004,
+    "dynamoWrite": 0.00014199999999999998,
+    "dynamoRead": 0.00001425,
+    "s3Storage": 0.00005,
+    "dynamoStorage": 0.000028499999999999998
+  },
+  "subtotalPerInvoice": 0.010352250400000002,
+  "subtotalFor1000": 10.352250400000003,
+  "excludes": [
+    "S3 request charges",
+    "CloudWatch ingestion/storage",
+    "internet data transfer",
+    "deployment artifact storage",
+    "operator/support costs",
+    "taxes"
+  ],
+  "ignoresDiscounts": [
+    "free tiers",
+    "promotional credits",
+    "negotiated discounts"
+  ],
+  "notes": [
+    "DynamoDB write units include an assumed allowance for transaction overhead and snapshots; actual units depend on item sizes.",
+    "All assumed objects are retained for one month; continuing retention accumulates costs.",
+    "Lambda GB-seconds are assumed: 512 MiB multiplied by 12 aggregate execution seconds across 30 invocations.",
+    "Actual workload counts and provider latency are reported separately by the live verification/evaluation scripts."
+  ]
+}

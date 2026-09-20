@@ -30,7 +30,7 @@ export default {
       AssumeRolePolicyDocument: { Version: '2012-10-17', Statement: [{ Effect: 'Allow', Principal: { Service: 'lambda.amazonaws.com' }, Action: 'sts:AssumeRole' }] },
       ManagedPolicyArns: [sub('arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole')],
       Policies: [{ PolicyName: 'ReceiveRightResources', PolicyDocument: { Version: '2012-10-17', Statement: [
-        { Effect: 'Allow', Action: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:Query'], Resource: att('Records', 'Arn') },
+        { Effect: 'Allow', Action: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:Query', 'dynamodb:ConditionCheckItem'], Resource: att('Records', 'Arn') },
         { Effect: 'Allow', Action: ['s3:GetObject', 's3:GetObjectVersion', 's3:PutObject'], Resource: sub('${EvidenceBucket.Arn}/*') },
         { Effect: 'Allow', Action: 'textract:AnalyzeExpense', Resource: '*' },
         { Effect: 'Allow', Action: 'bedrock:InvokeModel', Resource: [sub('arn:${AWS::Partition}:bedrock:*::foundation-model/amazon.nova-lite-v1:0'), sub('arn:${AWS::Partition}:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/apac.amazon.nova-lite-v1:0')] }

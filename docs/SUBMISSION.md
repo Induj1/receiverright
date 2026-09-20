@@ -1,22 +1,24 @@
 # First Commit submission draft
 
-This file maps to the event's submission form. **TODO / MOCK fields are placeholders, not real identities, links, contributions, or completed publishing.** Replace them before submission. The user authorized keeping the other teammates' details mocked for now. This file does not submit the form.
+This file maps to the event's submission form. **TODO fields must be completed or left blank where optional before submission.** Team roster supplied by Induj: **Bro code**, four members. The supplied roster lists Harshita Nagesh as leader; the final leader selection awaits confirmation. This file does not submit the form.
 
 ## Team details
 
 | Form field | Team leader | Second member | Third member | Fourth member |
 | --- | --- | --- | --- | --- |
-| Name for internal reference | **Induj Gupta** | **MOCK_MEMBER_2 — replace** | **MOCK_MEMBER_3 — replace** | **MOCK_MEMBER_4 — replace** |
-| WeMakeDevs username | **TODO: copy Induj's actual username from wemakedevs.org/home** | TODO: actual username | TODO: actual username | TODO: actual username |
-| GitHub | https://github.com/Induj1 | TODO: actual GitHub URL | TODO: actual GitHub URL | TODO: actual GitHub URL |
-| LinkedIn | https://linkedin.com/in/induj-gupta-35382752 | TODO: actual LinkedIn URL | TODO: actual LinkedIn URL | TODO: actual LinkedIn URL |
-| Public resume | TODO: actual publicly accessible resume URL | TODO: actual publicly accessible resume URL | TODO: actual publicly accessible resume URL | TODO: actual publicly accessible resume URL |
+| Name for internal reference | **Harshita Nagesh** | **Rayyan Shaikh** | **Induj Gupta** | **Laavanya Gupta** |
+| WeMakeDevs username | hashh | theclazer | **indujgupta** (confirmed by Induj) | laavanya_gupta |
+| GitHub | **TODO: Harshita's GitHub URL — required leader field** | TODO: actual GitHub URL | https://github.com/Induj1 | TODO: actual GitHub URL |
+| LinkedIn | **TODO: Harshita's LinkedIn URL — required leader field** | TODO: actual LinkedIn URL | https://linkedin.com/in/induj-gupta-35382752 | TODO: actual LinkedIn URL |
+| Public resume | TODO: actual publicly accessible resume URL | TODO: actual publicly accessible resume URL | [Induj's resume](https://drive.google.com/file/d/1cpC_WRSW6VHzSTqkjatfut-t2u2n2jg8/view?usp=sharing) | TODO: actual publicly accessible resume URL |
 
 Resume URLs are needed for consideration for Amazon Fast Track Interviews. Do not publish a fabricated resume or a placeholder URL.
 
+Induj's resume opened successfully in the signed-out Google Drive viewer on 20 September 2026. The roster showed `@induj`, but Induj explicitly confirmed `indujgupta` as the actual WeMakeDevs username. Other usernames are transcribed from the supplied roster. Profile links must belong to the person in that column; Induj's profiles must not be submitted as Harshita's.
+
 ## Project title
 
-**ReceiveRight — Every delivery accounted for**
+**ReceiveRight — One delivery. One shared record.**
 
 ## Track
 
@@ -38,46 +40,44 @@ The deployed receiver/supplier lifecycle, private S3 evidence and real Textract 
 
 ## What does your project do?
 
-ReceiveRight helps small shops document delivery shortages, damaged items, and wrong items while goods are being received. Instead of leaving the invoice, counts, photographs, and supplier replies scattered across paper and messages, it keeps them together in one receiving record.
+ReceiveRight gives small shops and their suppliers one shared record of a delivery discrepancy: what was billed, what physically arrived, what evidence was attached, and what each side acknowledged. It replaces the need to reconstruct that context from an invoice, loose photographs, and separate messages.
 
-The receiver uploads an invoice or enters its items, checks any extracted suggestions against the source, and confirms the physical counts. Pack/carton conversions must be resolved before sharing. Deterministic code calculates item-value discrepancies without double-counting damaged or wrong units as missing. The supplier opens a PIN-protected link to inspect the same revision and acknowledge or dispute each affected line. The receiver can then export the record or close it once all discrepancy lines are acknowledged.
+The receiver uploads an invoice, reviews editable Textract suggestions, and counts the delivery. Unknown quantities and units remain unresolved; pack sizes require human confirmation. Deterministic code calculates item-value discrepancies without double-counting damage as shortage. A supplier opens a PIN-protected review and acknowledges or disputes each affected line against that saved revision. Later edits invalidate the invitation, while saved versions retain earlier quantities, evidence references, and responses. Closure requires every affected line to be acknowledged. A saved recovery code restores workspace access after changing devices.
 
-Our synthetic demonstration shows a ₹200 shortage and ₹80 of damaged items, with an ambiguous carton conversion deliberately blocked until confirmed. The app does not claim that photographs prove hidden quantities, or that acknowledgement means money was recovered. It currently supports whole packaged units and excludes tax, discounts, and payment settlement. Real-shop impact has not yet been validated.
+The recorded synthetic example reconciles a ₹200 shortage and ₹80 of damage. We verified 103 software tests and the deployed receiver/supplier workflow. In a separate five-image synthetic evaluation, real Textract returned 12 of 13 printed rows; that omission led to an explicit source-comparison warning. This is not a real-shop accuracy or impact claim. The current scope is whole packaged units, item value excluding tax/discounts, and recorded agreement—not payment settlement or verified supplier identity.
 
 ## How did you use AWS in your project?
 
-Amazon API Gateway HTTP API provides the public HTTPS entry point, and AWS Lambda serves the React application and TypeScript/Express API. Amazon DynamoDB stores receiving cases, workspace sessions, supplier links, and responses. Conditional writes preserve revision consistency and reject stale concurrent updates.
+For Ship it, Amazon API Gateway HTTP API provides the public HTTPS entry point and AWS Lambda serves the React/TypeScript interface and Express API. Amazon DynamoDB stores cases, sessions, recovery-code hashes, supplier links, and responses. Conditional writes reject stale changes; transactions save the current record and its historical snapshot together. We separate the invoice-content revision from storage concurrency so supplier responses stay bound to the content actually reviewed.
 
-A separate private, versioned Amazon S3 bucket stores invoice and delivery evidence. Uploads use short-lived signed URLs, and attached evidence is tied to a checked S3 object version. Amazon Textract AnalyzeExpense returns editable invoice suggestions and source locations. Our deployed integration processed a synthetic invoice PNG from S3 and returned three line items, supplier and invoice fields; each suggestion still requires review. The application calculates money in integer paise and requires explicit confirmation of pack conversions and physical receiving counts.
+A private, versioned Amazon S3 bucket stores invoice and delivery evidence. Short-lived signed URLs and checked object versions preserve access to the evidence attached to an earlier saved state. Amazon Textract AnalyzeExpense suggests invoice fields and source locations; it does not infer physical counts or pack sizes. We exercised five synthetic invoices through the deployed integration and published its missing-row and unknown-unit failures. Money calculations use integer paise and require confirmed receiving details.
 
-An optional Amazon Bedrock Converse adapter can draft neutral case-summary wording from the computed record. The current deployment leaves Bedrock disabled because model authorization is unavailable, and explicitly uses deterministic templates. The interface identifies configured providers. All included demonstration data is labeled synthetic; the prefilled fixture is distinct from the separately verified Textract extraction.
+The deployed provider indicators show DynamoDB, Textract, and deterministic template summaries. Bedrock is an optional adapter in the source, but remains disabled; it is not counted as an exercised service. CloudFront is not deployed. A reproducible Mumbai pricing model estimates a $10.35 core-service subtotal for 1,000 one-page invoices under stated workload assumptions, excluding logs, transfer, S3 requests, and other costs. No AWS open-source track integration is claimed.
 
 ## Blog links
 
 | Author | AWS Builder Center blog link |
 | --- | --- |
+| Harshita Nagesh | Leave blank unless actually published |
+| Rayyan Shaikh | Leave blank unless actually published |
 | Induj Gupta | TODO: actual published Builder Center article URL, or leave blank |
-| Second member | TODO: actual published article URL, or leave blank |
-| Third member | TODO: actual published article URL, or leave blank |
-| Fourth member | TODO: actual published article URL, or leave blank |
+| Laavanya Gupta | Leave blank unless actually published |
 
 ## Team leader's contributions
 
-**Factual draft:** Induj Gupta selected the problem direction, set the delivery-reconciliation scope, directed the AI-assisted project implementation and submission preparation, and completed AWS account sign-in and setup to enable deployment. OpenAI Codex substantially assisted with the frontend, backend, reconciliation logic, automated tests, deployment, browser verification, documentation, and code review. Add any further personally completed testing, field-validation, presentation, or coding work after it has actually been done.
-
-Do not replace this with a claim that Induj manually wrote every part of the implementation. Record human review and verification work specifically.
+**Harshita Nagesh — TODO:** Confirm her actual completed contribution. The roster identifies her as leader; that alone does not establish coding, testing, or field-validation work.
 
 ## Second team member's contributions
 
-**MOCK / TODO:** No individual deliverables have been confirmed. Replace with this teammate's actual completed work; otherwise leave the optional field blank.
+**Rayyan Shaikh — TODO:** No individual deliverables have been confirmed. Add actual completed work; otherwise leave the optional field blank.
 
 ## Third team member's contributions
 
-**MOCK / TODO:** No individual deliverables have been confirmed. Replace with this teammate's actual completed work; otherwise leave the optional field blank.
+**Induj Gupta:** Selected the problem direction, set the delivery-reconciliation scope, directed the AI-assisted implementation and submission preparation, completed AWS account sign-in and setup, and supplied team/profile details. OpenAI Codex substantially assisted with implementation, tests, deployment, browser verification, documentation, and review. Add further personally completed testing, field-validation, presentation, or coding work only after it occurs.
 
 ## Fourth team member's contributions
 
-**MOCK / TODO:** No individual deliverables have been confirmed. Replace with this teammate's actual completed work; otherwise leave the optional field blank.
+**Laavanya Gupta — TODO:** No individual deliverables have been confirmed. Add actual completed work; otherwise leave the optional field blank.
 
 ## Help us evaluate you: your feedback on the AWS services you used
 
@@ -87,11 +87,11 @@ Preserving the exact evidence a supplier reviewed also required care. With S3, w
 
 DynamoDB conditional writes are useful, but business revision numbers and storage concurrency versions solve different problems. Our receiving record can change its review status without changing its invoice-content revision, so we keep those concepts separate. More examples showing revision-bound review links and conditional updates together would help application builders.
 
-Textract supplies suggested invoice fields, but the application still needs a review interface for missing quantities, ambiguous units, and pack sizes. We would value more packaged-goods invoice examples explaining how to present uncertainty and unit conversions to the person reviewing extraction.
+Textract omitted an entire blank-quantity row in one of five synthetic fixtures and left two billed units unknown in another. Confidence on returned fields cannot flag a row that never arrived. More packaged-goods examples and guidance on detecting incomplete line-item coverage would help; we now require comparison with the original and keep physical counts separate.
 
 ## What did you like about the AWS services you used?
 
-DynamoDB's conditional writes give the API a clear way to reject stale changes instead of silently overwriting another saved record. S3 version IDs let us preserve the exact evidence snapshot attached to a receiving revision, while signed URLs keep the evidence bucket private. Our live smoke test uploaded and retrieved the same 246,251-byte synthetic PNG through authorized evidence access. Textract returned three line items and supplier/invoice fields from that document, fitting the editable review workflow. This verifies that input and integration, not general extraction accuracy.
+DynamoDB conditional writes reject stale changes, while transactions let us retain a historical state alongside each current-record update. Our deployed checks recovered the same workspace and retrieved earlier supplier responses and evidence after later edits. S3 version IDs and short-lived URLs made that private evidence workflow practical: the live check downloaded the same 246,251-byte synthetic invoice that was uploaded. Textract's structured fields and source locations fit an editable review interface, while its observed gaps remain visible to the user.
 
 Lambda and API Gateway fit this application's short request/response workflow and let us serve both the mobile interface and API from one HTTPS entry point when our original CloudFront plan was blocked. We also liked being able to keep AI optional: the evidence workflow and deterministic calculations remain usable when extraction or generated summaries are unavailable.
 

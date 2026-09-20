@@ -1,0 +1,569 @@
+{
+  "startedAt": "2026-09-20T12:58:03.975Z",
+  "origin": "https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com",
+  "kind": "Measured live application extraction on generated synthetic invoices",
+  "limitations": [
+    "Five generated invoices are a tiny convenience sample, not representative customer accuracy.",
+    "No user pilot, real shop invoice, handwriting, multilingual document, or photographed crumpled paper is included.",
+    "Null quantity and unknown unit mean the source invoice omits that field; filling it would be an inference.",
+    "Line order follows the printed table. Price is integer paise per billed unit, with no tax or discount.",
+    "Receiving counts and pack sizes are not ground-truth invoice fields and must remain unconfirmed."
+  ],
+  "alignment": "Printed row order. Missing rows fail all expected fields; extra rows are separately counted. Descriptions/supplier/invoice identifiers compare case-insensitive alphanumeric text. Numeric and unit fields compare exact values.",
+  "cases": [
+    {
+      "id": "01-clean-pieces",
+      "variant": "Clean portrait invoice with a separate unit column",
+      "fixture": "public/evaluation/01-clean-pieces.png",
+      "expectedLineCount": 3,
+      "status": "completed",
+      "provider": "textract",
+      "extractionElapsedMs": 1814,
+      "actualLineCount": 3,
+      "extraRows": 0,
+      "missingRows": 0,
+      "supplierMatch": true,
+      "invoiceNumberMatch": false,
+      "warnings": [
+        "Review every extracted field against the invoice. All rows are unconfirmed; receiving counts and pack sizes are never inferred.",
+        "Prices are suggestions in INR per billed unit. Verify currency, taxes, discounts, and whether the printed price is per pack or per piece."
+      ],
+      "comparisons": [
+        {
+          "row": 1,
+          "expected": {
+            "description": "Drinking Water 1 L",
+            "billedQty": 12,
+            "billedUnit": "piece",
+            "unitPriceMinor": 10000
+          },
+          "actual": {
+            "description": "Drinking Water 1 L",
+            "billedQty": 12,
+            "billedUnit": "piece",
+            "unitPriceMinor": 10000,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 2,
+          "expected": {
+            "description": "Oat Biscuits 150 g",
+            "billedQty": 24,
+            "billedUnit": "piece",
+            "unitPriceMinor": 4000
+          },
+          "actual": {
+            "description": "Oat Biscuits 150 g",
+            "billedQty": 24,
+            "billedUnit": "piece",
+            "unitPriceMinor": 4000,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 3,
+          "expected": {
+            "description": "Tea Pouch 100 g",
+            "billedQty": 8,
+            "billedUnit": "piece",
+            "unitPriceMinor": 12000
+          },
+          "actual": {
+            "description": "Tea Pouch 100 g",
+            "billedQty": 8,
+            "billedUnit": "piece",
+            "unitPriceMinor": 12000,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        }
+      ],
+      "receivingCountsRemainUnknown": true
+    },
+    {
+      "id": "02-carton-mixed",
+      "variant": "Monochrome invoice with quantity suffix units",
+      "fixture": "public/evaluation/02-carton-mixed.png",
+      "expectedLineCount": 3,
+      "status": "completed",
+      "provider": "textract",
+      "extractionElapsedMs": 1931,
+      "actualLineCount": 3,
+      "extraRows": 0,
+      "missingRows": 0,
+      "supplierMatch": true,
+      "invoiceNumberMatch": false,
+      "warnings": [
+        "Review every extracted field against the invoice. All rows are unconfirmed; receiving counts and pack sizes are never inferred.",
+        "Prices are suggestions in INR per billed unit. Verify currency, taxes, discounts, and whether the printed price is per pack or per piece."
+      ],
+      "comparisons": [
+        {
+          "row": 1,
+          "expected": {
+            "description": "Black Tea 100 g",
+            "billedQty": 2,
+            "billedUnit": "carton",
+            "unitPriceMinor": 120000
+          },
+          "actual": {
+            "description": "Black Tea 100 g",
+            "billedQty": 2,
+            "billedUnit": "carton",
+            "unitPriceMinor": 120000,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 2,
+          "expected": {
+            "description": "Hand Soap 75 g",
+            "billedQty": 3,
+            "billedUnit": "box",
+            "unitPriceMinor": 48000
+          },
+          "actual": {
+            "description": "Hand Soap 75 g",
+            "billedQty": 3,
+            "billedUnit": "box",
+            "unitPriceMinor": 48000,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 3,
+          "expected": {
+            "description": "Fruit Juice 1 L",
+            "billedQty": 6,
+            "billedUnit": "piece",
+            "unitPriceMinor": 9500
+          },
+          "actual": {
+            "description": "Fruit Juice 1 L",
+            "billedQty": 6,
+            "billedUnit": "piece",
+            "unitPriceMinor": 9500,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        }
+      ],
+      "receivingCountsRemainUnknown": true
+    },
+    {
+      "id": "03-missing-fields",
+      "variant": "Invoice with deliberately blank quantity and unit cells",
+      "fixture": "public/evaluation/03-missing-fields.png",
+      "expectedLineCount": 2,
+      "status": "completed",
+      "provider": "textract",
+      "extractionElapsedMs": 1704,
+      "actualLineCount": 1,
+      "extraRows": 0,
+      "missingRows": 1,
+      "supplierMatch": true,
+      "invoiceNumberMatch": false,
+      "warnings": [
+        "Review every extracted field against the invoice. All rows are unconfirmed; receiving counts and pack sizes are never inferred.",
+        "Prices are suggestions in INR per billed unit. Verify currency, taxes, discounts, and whether the printed price is per pack or per piece.",
+        "Row 1: Billed unit was not recognized; choose piece, pack, or carton from the invoice."
+      ],
+      "comparisons": [
+        {
+          "row": 1,
+          "expected": {
+            "description": "Milk Powder 500 g",
+            "billedQty": null,
+            "billedUnit": "unknown",
+            "unitPriceMinor": 24000
+          },
+          "actual": {
+            "description": "Paper Cups 12 X 50",
+            "billedQty": 4,
+            "billedUnit": "unknown",
+            "unitPriceMinor": 18000,
+            "note": "Billed unit was not recognized; choose piece, pack, or carton from the invoice."
+          },
+          "matches": {
+            "description": false,
+            "billedQty": false,
+            "billedUnit": true,
+            "unitPriceMinor": false
+          }
+        },
+        {
+          "row": 2,
+          "expected": {
+            "description": "Paper Cups 12 x 50",
+            "billedQty": 4,
+            "billedUnit": "unknown",
+            "unitPriceMinor": 18000
+          },
+          "actual": null,
+          "matches": {
+            "description": false,
+            "billedQty": false,
+            "billedUnit": false,
+            "unitPriceMinor": false
+          }
+        }
+      ],
+      "receivingCountsRemainUnknown": true
+    },
+    {
+      "id": "04-indian-money",
+      "variant": "Invoice with Indian thousands grouping and paise",
+      "fixture": "public/evaluation/04-indian-money.png",
+      "expectedLineCount": 2,
+      "status": "completed",
+      "provider": "textract",
+      "extractionElapsedMs": 1836,
+      "actualLineCount": 2,
+      "extraRows": 0,
+      "missingRows": 0,
+      "supplierMatch": true,
+      "invoiceNumberMatch": false,
+      "warnings": [
+        "Review every extracted field against the invoice. All rows are unconfirmed; receiving counts and pack sizes are never inferred.",
+        "Prices are suggestions in INR per billed unit. Verify currency, taxes, discounts, and whether the printed price is per pack or per piece.",
+        "Row 1: Billed unit was not recognized; choose piece, pack, or carton from the invoice.",
+        "Row 2: Billed unit was not recognized; choose piece, pack, or carton from the invoice."
+      ],
+      "comparisons": [
+        {
+          "row": 1,
+          "expected": {
+            "description": "Display Pack A",
+            "billedQty": 2,
+            "billedUnit": "box",
+            "unitPriceMinor": 1245050
+          },
+          "actual": {
+            "description": "Display Pack A",
+            "billedQty": 2,
+            "billedUnit": "unknown",
+            "unitPriceMinor": 1245050,
+            "note": "Billed unit was not recognized; choose piece, pack, or carton from the invoice."
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": false,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 2,
+          "expected": {
+            "description": "Retail Bundle B",
+            "billedQty": 1,
+            "billedUnit": "carton",
+            "unitPriceMinor": 10500000
+          },
+          "actual": {
+            "description": "Retail Bundle B",
+            "billedQty": 1,
+            "billedUnit": "unknown",
+            "unitPriceMinor": 10500000,
+            "note": "Billed unit was not recognized; choose piece, pack, or carton from the invoice."
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": false,
+            "unitPriceMinor": true
+          }
+        }
+      ],
+      "receivingCountsRemainUnknown": true
+    },
+    {
+      "id": "05-simulated-scan",
+      "variant": "Generated gray low-contrast scan, 1.3 degree rotation and light blur",
+      "fixture": "public/evaluation/05-simulated-scan.png",
+      "expectedLineCount": 3,
+      "status": "completed",
+      "provider": "textract",
+      "extractionElapsedMs": 2011,
+      "actualLineCount": 3,
+      "extraRows": 0,
+      "missingRows": 0,
+      "supplierMatch": true,
+      "invoiceNumberMatch": false,
+      "warnings": [
+        "Review every extracted field against the invoice. All rows are unconfirmed; receiving counts and pack sizes are never inferred.",
+        "Prices are suggestions in INR per billed unit. Verify currency, taxes, discounts, and whether the printed price is per pack or per piece."
+      ],
+      "comparisons": [
+        {
+          "row": 1,
+          "expected": {
+            "description": "Rice Crackers 100 g",
+            "billedQty": 18,
+            "billedUnit": "piece",
+            "unitPriceMinor": 5500
+          },
+          "actual": {
+            "description": "Rice Crackers 100 g",
+            "billedQty": 18,
+            "billedUnit": "piece",
+            "unitPriceMinor": 5500,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 2,
+          "expected": {
+            "description": "Cocoa Mix 200 g",
+            "billedQty": 6,
+            "billedUnit": "piece",
+            "unitPriceMinor": 17550
+          },
+          "actual": {
+            "description": "Cocoa Mix 200 g",
+            "billedQty": 6,
+            "billedUnit": "piece",
+            "unitPriceMinor": 17550,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        },
+        {
+          "row": 3,
+          "expected": {
+            "description": "Lemon Drink 500 ml",
+            "billedQty": 12,
+            "billedUnit": "piece",
+            "unitPriceMinor": 3500
+          },
+          "actual": {
+            "description": "Lemon Drink 500 ml",
+            "billedQty": 12,
+            "billedUnit": "piece",
+            "unitPriceMinor": 3500,
+            "note": ""
+          },
+          "matches": {
+            "description": true,
+            "billedQty": true,
+            "billedUnit": true,
+            "unitPriceMinor": true
+          }
+        }
+      ],
+      "receivingCountsRemainUnknown": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "route": "/api/sessions",
+      "status": 201,
+      "elapsedMs": 3024
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases",
+      "status": 201,
+      "elapsedMs": 244
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads",
+      "status": 201,
+      "elapsedMs": 121
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads/:uploadId/complete",
+      "status": 201,
+      "elapsedMs": 360
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/extract",
+      "status": 200,
+      "elapsedMs": 1814
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases",
+      "status": 201,
+      "elapsedMs": 73
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads",
+      "status": 201,
+      "elapsedMs": 83
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads/:uploadId/complete",
+      "status": 201,
+      "elapsedMs": 154
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/extract",
+      "status": 200,
+      "elapsedMs": 1931
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases",
+      "status": 201,
+      "elapsedMs": 372
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads",
+      "status": 201,
+      "elapsedMs": 63
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads/:uploadId/complete",
+      "status": 201,
+      "elapsedMs": 116
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/extract",
+      "status": 200,
+      "elapsedMs": 1704
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases",
+      "status": 201,
+      "elapsedMs": 66
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads",
+      "status": 201,
+      "elapsedMs": 61
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads/:uploadId/complete",
+      "status": 201,
+      "elapsedMs": 229
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/extract",
+      "status": 200,
+      "elapsedMs": 1836
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases",
+      "status": 201,
+      "elapsedMs": 76
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads",
+      "status": 201,
+      "elapsedMs": 78
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads/:uploadId/complete",
+      "status": 201,
+      "elapsedMs": 156
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/extract",
+      "status": 200,
+      "elapsedMs": 2011
+    }
+  ],
+  "summary": {
+    "invoices": 5,
+    "completed": 5,
+    "expectedRows": 13,
+    "fields": {
+      "description": {
+        "matched": 11,
+        "total": 13
+      },
+      "billedQty": {
+        "matched": 11,
+        "total": 13
+      },
+      "billedUnit": {
+        "matched": 10,
+        "total": 13
+      },
+      "unitPriceMinor": {
+        "matched": 11,
+        "total": 13
+      }
+    },
+    "extraRows": 0,
+    "unknownSourceQuantityPreserved": false,
+    "physicalCountsNeverInferred": true,
+    "extractionElapsedMs": [
+      1814,
+      1931,
+      1704,
+      1836,
+      2011
+    ],
+    "unknownSourceQuantityCoverage": {
+      "preserved": 0,
+      "total": 1
+    }
+  },
+  "completedAt": "2026-09-20T12:58:23.941Z"
+}

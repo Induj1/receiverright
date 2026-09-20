@@ -58,7 +58,11 @@ The deployed browser workflow was previously exercised with synthetic records:
 4. Desktop screens were inspected at 1280 x 720. A 390-pixel mobile frame showed no horizontal overflow in the inspected overview.
 5. A local unsaved-changes check preserved the draft after navigation was cancelled.
 
-The [overview](screenshots/overview.png), [extraction dialog](screenshots/textract.png), and [supplier review](screenshots/supplier.png) show the deployed interface captured during those checks. The new recovery/history changes have passed local automated tests and live API verification; their additional browser walkthrough is being finalized. Do not interpret targeted checks as a formal accessibility audit or broad device certification.
+The final deployed browser walkthrough additionally uploaded the original synthetic PNG, requested real Textract extraction, corrected an unknown billed unit, entered physical counts and a 12-unit carton conversion, and saved the INR 280 discrepancy. A separate supplier tab acknowledged both affected lines. The receiver closed the record, opened the earlier response snapshot, then restored the original workspace from a separate empty workspace using its masked recovery-code input. The same saved delivery remained accessible.
+
+A 390-pixel local development frame was used to inspect the final receiving view, saved-version view, workspace settings, and recovery dialog. The inspected document widths stayed within the frame; the recovery dialog measured about 352 pixels. An icon-only Export button received an accessible name after this check. This is a desktop-browser breakpoint check, not a physical-phone test.
+
+The [overview](screenshots/overview.png), [extraction dialog](screenshots/textract.png), [supplier review](screenshots/supplier.png), and [mobile recovery dialog](screenshots/mobile-recovery.png) show inspected interface states. Do not interpret these targeted checks as a formal accessibility audit or broad device certification.
 
 ## Claims this evidence does not support
 

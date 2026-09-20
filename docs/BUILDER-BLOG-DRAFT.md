@@ -61,7 +61,7 @@ The [cost model](OPERATING-COST.md) uses Mumbai catalog rates and explicit workl
 
 ## Measure the narrow claims
 
-The project has 102 passing automated tests across receiving arithmetic, parsing, API behavior, recovery, and saved history. The live AWS smoke run exercised recovery, renewal, a supplier acknowledgement, later edits with retained responses, historical evidence, closure, and exports.
+The project has 103 passing automated tests across receiving arithmetic, parsing, API behavior, recovery, and saved history. The live AWS smoke run exercised recovery, renewal, a supplier acknowledgement, later edits with retained responses, historical evidence, closure, and exports. A recorded browser walkthrough separately exercised invoice upload, real extraction, unit correction, supplier responses, closure, historical states, and restoration of the same workspace.
 
 Separately, all five generated invoice images completed extraction through the deployed API in 1.704-2.011 seconds from one client. Textract returned 12 of 13 printed rows. Three fixtures matched every scored line field. The incomplete invoice lost a row, two units in the Indian-price fixture stayed unknown, and invoice identifiers also needed review. The [full results and scoring method](INVOICE-EVALUATION.md) preserve those failures. These images are a tiny convenience sample, not representative OCR accuracy or a load test.
 
