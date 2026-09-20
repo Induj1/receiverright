@@ -524,7 +524,7 @@ function Dashboard({
               foot={
                 totals.sample
                   ? "Sample workspace activity"
-                  : "Across your workspace"
+                  : "Sample deliveries excluded"
               }
               icon={<Package size={20} />}
             />
