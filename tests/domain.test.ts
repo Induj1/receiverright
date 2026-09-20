@@ -64,6 +64,22 @@ describe('receiving reconciliation', () => {
     expect(reconcileLine(line({ billedUnit: 'unit', packSize: 12 })).ready).toBe(false);
     expect(reconcileLine(line({ billedUnit: 'kg' })).ready).toBe(false);
   });
+
+  it('allows a missing billed quantity in a draft without pricing it as zero', () => {
+    const draft = line({ billedQty: null });
+    expect(validateCaseInput({ lines: [draft] })).toEqual([]);
+    expect(reconcileLine(draft)).toMatchObject({ expectedUnits: null, discrepancyMinor: null, ready: false });
+    expect(reconcileLine(draft).issues.join(' ')).toContain('billed quantity');
+  });
+
+  it('does not calculate an amount from a missing unit even when a quantity and price exist', () => {
+    expect(reconcileLine(line({ billedUnit: 'unknown' }))).toMatchObject({ expectedUnits: null, discrepancyMinor: null, ready: false });
+  });
+
+  it('enforces the same 100-line maximum as the API and extraction parser', () => {
+    expect(validateCaseInput({ lines: Array.from({ length: 100 }, () => line()) })).toEqual([]);
+    expect(validateCaseInput({ lines: Array.from({ length: 101 }, () => line()) }).join(' ')).toContain('100 invoice lines');
+  });
 });
 
 describe('case workflow', () => {

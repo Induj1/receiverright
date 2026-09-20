@@ -3,7 +3,7 @@ import type { InvoiceLine, ReceivingCase } from './types';
 const uniqueId = (): string => globalThis.crypto.randomUUID();
 
 export function makeBlankLine(overrides: Partial<InvoiceLine> = {}): InvoiceLine {
-  return { id: uniqueId(), description: '', sku: '', billedQty: 0, billedUnit: 'unit', packSize: 1, receivedQty: null, damagedQty: 0, wrongQty: 0, unitPriceMinor: null, confirmed: false, note: '', ...overrides };
+  return { id: uniqueId(), description: '', sku: '', billedQty: null, billedUnit: 'unit', packSize: 1, receivedQty: null, damagedQty: 0, wrongQty: 0, unitPriceMinor: null, confirmed: false, note: '', ...overrides };
 }
 
 /** Synthetic data only. The sample deliberately stops at an unresolved pack conversion. */

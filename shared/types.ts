@@ -1,7 +1,7 @@
 export type CaseStatus = 'draft' | 'ready' | 'shared' | 'responded' | 'closed';
 export type Provider = 'sample' | 'manual' | 'textract';
 export interface SourceBox { left:number; top:number; width:number; height:number; page:number; confidence:number; }
-export interface InvoiceLine { id:string; description:string; sku:string; billedQty:number; billedUnit:string; packSize:number|null; receivedQty:number|null; damagedQty:number; wrongQty:number; unitPriceMinor:number|null; confirmed:boolean; note:string; source?:SourceBox; }
+export interface InvoiceLine { id:string; description:string; sku:string; billedQty:number|null; billedUnit:string; packSize:number|null; receivedQty:number|null; damagedQty:number; wrongQty:number; unitPriceMinor:number|null; confirmed:boolean; note:string; source?:SourceBox; }
 export interface Evidence { id:string; fileName:string; mimeType:string; kind:'invoice'|'photo'; lineId?:string; url:string; createdAt:string; }
 export interface AuditEvent { id:string; at:string; actor:string; action:string; detail:string; revision:number; }
 export interface SupplierResponse { lineId:string; decision:'acknowledged'|'disputed'; note:string; at:string; actor:string; revision:number; }

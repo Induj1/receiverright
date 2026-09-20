@@ -1,12 +1,13 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { S3Client, PutObjectCommand, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { TextractClient, AnalyzeExpenseCommand } from '@aws-sdk/client-textract';
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
-import type { Evidence, ExtractionResult, InvoiceLine, ReceivingCase } from '../shared/types.js';
+import type { Evidence, ExtractionResult, ReceivingCase } from '../shared/types.js';
 import { reconcileCase } from '../shared/domain.js';
+import { parseExpenseResult } from './extraction.js';
 
 export interface UploadRecord { id:string; caseId:string; workspaceId:string; fileName:string; mimeType:string; kind:Evidence['kind']; lineId?:string; size:number; key:string; tokenHash:string; expiresAt:number; completed:boolean; evidenceId?:string; }
 export interface EvidenceRecord { evidence:Evidence; caseId:string; workspaceId:string; key:string; size:number; versionId?:string; }
@@ -59,24 +60,7 @@ export class Providers {
   async extract(record:EvidenceRecord):Promise<ExtractionResult> {
     if (!this.textractEnabled) throw new UploadProblem('AWS Textract is not enabled. Enter the invoice manually until service access has been verified.');
     const result = await this.textract.send(new AnalyzeExpenseCommand({Document:{S3Object:{Bucket:this.bucket,Name:record.key,Version:record.versionId}}}));
-    const document = result.ExpenseDocuments?.[0];
-    const summary = (type:string) => document?.SummaryFields?.find(f=>f.Type?.Text===type)?.ValueDetection?.Text ?? '';
-    const warnings = ['Review every extracted field against the invoice. Counts, units, taxes, discounts, and pack sizes require human confirmation.'];
-    const number = (value:string):number|null => { const cleaned = value.replace(/[^\d.,-]/g,'').replace(/,/g,''); if (!cleaned) return null; const parsed = Number(cleaned); return Number.isFinite(parsed) && parsed >= 0 ? parsed : null; };
-    const lines:InvoiceLine[] = [];
-    for (const group of document?.LineItemGroups ?? []) for (const item of group.LineItems ?? []) {
-      const fields = item.LineItemExpenseFields ?? [];
-      const field = (name:string) => fields.find(f=>f.Type?.Text===name);
-      const description = field('ITEM')?.ValueDetection?.Text ?? field('EXPENSE_ROW')?.ValueDetection?.Text ?? '';
-      if (!description.trim()) continue;
-      const quantity = number(field('QUANTITY')?.ValueDetection?.Text ?? '');
-      const unitPrice = number(field('UNIT_PRICE')?.ValueDetection?.Text ?? '');
-      const source = field('ITEM')?.ValueDetection ?? field('EXPENSE_ROW')?.ValueDetection;
-      const box = source?.Geometry?.BoundingBox;
-      lines.push({id:randomUUID(),description:description.slice(0,300),sku:field('PRODUCT_CODE')?.ValueDetection?.Text?.slice(0,100) ?? '',billedQty:quantity ?? 0,billedUnit:'piece',packSize:null,receivedQty:null,damagedQty:0,wrongQty:0,unitPriceMinor:unitPrice === null ? null : Math.round(unitPrice*100),confirmed:false,note:quantity === null ? 'Quantity was not recognized. Confirm the billed quantity and unit.' : 'Confirm the billed unit; piece is a placeholder.',...(box ? {source:{left:box.Left ?? 0,top:box.Top ?? 0,width:box.Width ?? 0,height:box.Height ?? 0,page:field('ITEM')?.PageNumber ?? 1,confidence:source?.Confidence ?? 0}} : {})});
-    }
-    if (!lines.length) warnings.push('No item rows were recognized. Add the lines manually.');
-    return {lines:lines.slice(0,100),supplier:summary('VENDOR_NAME').slice(0,200),invoiceNumber:summary('INVOICE_RECEIPT_ID').slice(0,100),invoiceDate:summary('INVOICE_RECEIPT_DATE').slice(0,40),provider:'textract',warnings};
+    return parseExpenseResult(result);
   }
   async summary(record:ReceivingCase):Promise<{summary:string;provider:'template'|'bedrock'}> {
     const result = reconcileCase(record);

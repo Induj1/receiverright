@@ -1,0 +1,149 @@
+{
+  "kind": "synthetic-ground-truth",
+  "version": 1,
+  "createdFor": "ReceiveRight parser and live Amazon Textract evaluation",
+  "limitations": [
+    "Five generated invoices are a tiny convenience sample, not representative customer accuracy.",
+    "No user pilot, real shop invoice, handwriting, multilingual document, or photographed crumpled paper is included.",
+    "Null quantity and unknown unit mean the source invoice omits that field; filling it would be an inference.",
+    "Line order follows the printed table. Price is integer paise per billed unit, with no tax or discount.",
+    "Receiving counts and pack sizes are not ground-truth invoice fields and must remain unconfirmed."
+  ],
+  "cases": [
+    {
+      "id": "01-clean-pieces",
+      "variant": "Clean portrait invoice with a separate unit column",
+      "supplier": "Harbor Example Supply",
+      "invoiceNumber": "SYN-001",
+      "lines": [
+        {
+          "description": "Drinking Water 1 L",
+          "billedQty": 12,
+          "billedUnit": "piece",
+          "unitPriceMinor": 10000
+        },
+        {
+          "description": "Oat Biscuits 150 g",
+          "billedQty": 24,
+          "billedUnit": "piece",
+          "unitPriceMinor": 4000
+        },
+        {
+          "description": "Tea Pouch 100 g",
+          "billedQty": 8,
+          "billedUnit": "piece",
+          "unitPriceMinor": 12000
+        }
+      ],
+      "visibleOmissions": [],
+      "image": "01-clean-pieces.png"
+    },
+    {
+      "id": "02-carton-mixed",
+      "variant": "Monochrome invoice with quantity suffix units",
+      "supplier": "Meadow Example Wholesale",
+      "invoiceNumber": "SYN-002",
+      "lines": [
+        {
+          "description": "Black Tea 100 g",
+          "billedQty": 2,
+          "billedUnit": "carton",
+          "unitPriceMinor": 120000
+        },
+        {
+          "description": "Hand Soap 75 g",
+          "billedQty": 3,
+          "billedUnit": "box",
+          "unitPriceMinor": 48000
+        },
+        {
+          "description": "Fruit Juice 1 L",
+          "billedQty": 6,
+          "billedUnit": "piece",
+          "unitPriceMinor": 9500
+        }
+      ],
+      "visibleOmissions": [
+        "Pack sizes intentionally absent; no physical receiving counts exist on the invoice."
+      ],
+      "image": "02-carton-mixed.png"
+    },
+    {
+      "id": "03-missing-fields",
+      "variant": "Invoice with deliberately blank quantity and unit cells",
+      "supplier": "Garden Example Traders",
+      "invoiceNumber": "SYN-003",
+      "lines": [
+        {
+          "description": "Milk Powder 500 g",
+          "billedQty": null,
+          "billedUnit": "unknown",
+          "unitPriceMinor": 24000
+        },
+        {
+          "description": "Paper Cups 12 x 50",
+          "billedQty": 4,
+          "billedUnit": "unknown",
+          "unitPriceMinor": 18000
+        }
+      ],
+      "visibleOmissions": [
+        "Row 1 has no quantity or billed unit.",
+        "Row 2 has no billed unit. Product text 12 x 50 is not a billed quantity or confirmed pack size."
+      ],
+      "image": "03-missing-fields.png"
+    },
+    {
+      "id": "04-indian-money",
+      "variant": "Invoice with Indian thousands grouping and paise",
+      "supplier": "Summit Example Distribution",
+      "invoiceNumber": "SYN-004",
+      "lines": [
+        {
+          "description": "Display Pack A",
+          "billedQty": 2,
+          "billedUnit": "box",
+          "unitPriceMinor": 1245050
+        },
+        {
+          "description": "Retail Bundle B",
+          "billedQty": 1,
+          "billedUnit": "carton",
+          "unitPriceMinor": 10500000
+        }
+      ],
+      "visibleOmissions": [
+        "Pack sizes intentionally absent."
+      ],
+      "image": "04-indian-money.png"
+    },
+    {
+      "id": "05-simulated-scan",
+      "variant": "Generated gray low-contrast scan, 1.3 degree rotation and light blur",
+      "supplier": "River Example Stores",
+      "invoiceNumber": "SYN-005",
+      "lines": [
+        {
+          "description": "Rice Crackers 100 g",
+          "billedQty": 18,
+          "billedUnit": "piece",
+          "unitPriceMinor": 5500
+        },
+        {
+          "description": "Cocoa Mix 200 g",
+          "billedQty": 6,
+          "billedUnit": "piece",
+          "unitPriceMinor": 17550
+        },
+        {
+          "description": "Lemon Drink 500 ml",
+          "billedQty": 12,
+          "billedUnit": "piece",
+          "unitPriceMinor": 3500
+        }
+      ],
+      "visibleOmissions": [],
+      "image": "05-simulated-scan.png"
+    }
+  ]
+}

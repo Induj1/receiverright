@@ -5,6 +5,7 @@ const whole = (value: unknown): value is number => typeof value === 'number' && 
 const present = (value: unknown): value is string => typeof value === 'string' && value.trim().length > 0;
 const packedUnits = new Set(['carton', 'cartons', 'pack', 'packs', 'box', 'boxes', 'case', 'cases', 'dozen', 'dozens']);
 const singleUnits = new Set(['unit', 'units', 'piece', 'pieces', 'pc', 'pcs', 'each', 'bottle', 'bottles', 'packet', 'packets', 'nos']);
+export const MAX_INVOICE_LINES = 100;
 
 export function requiresPackSize(unit: string): boolean {
   return packedUnits.has(String(unit ?? '').trim().toLowerCase());
@@ -22,7 +23,7 @@ export function validateCaseInput(input: unknown): string[] {
   if ('revision' in data && (!whole(data.revision) || data.revision < 1)) issues.push('Revision must be a positive whole number.');
   if (!('lines' in data)) return issues;
   if (!Array.isArray(data.lines)) return [...issues, 'Lines must be an array.'];
-  if (data.lines.length > 200) issues.push('A case supports up to 200 invoice lines.');
+  if (data.lines.length > MAX_INVOICE_LINES) issues.push(`A case supports up to ${MAX_INVOICE_LINES} invoice lines.`);
   const ids = new Set<string>();
   data.lines.forEach((raw, index) => {
     const prefix = `Line ${index + 1}: `;
@@ -34,9 +35,10 @@ export function validateCaseInput(input: unknown): string[] {
     for (const [field, maximum] of Object.entries({ description: 300, sku: 100, billedUnit: 40, note: 2000 })) {
       if (typeof line[field] !== 'string' || (line[field] as string).length > maximum) issues.push(`${prefix}${field} must be text of at most ${maximum} characters.`);
     }
-    for (const field of ['billedQty', 'damagedQty', 'wrongQty']) {
+    for (const field of ['damagedQty', 'wrongQty']) {
       if (!whole(line[field])) issues.push(`${prefix}${field} must be a nonnegative whole number.`);
     }
+    if (line.billedQty !== null && !whole(line.billedQty)) issues.push(`${prefix}billedQty must be a nonnegative whole number or null.`);
     if (line.receivedQty !== null && !whole(line.receivedQty)) issues.push(`${prefix}receivedQty must be a nonnegative whole number or null.`);
     if (line.packSize !== null && (!whole(line.packSize) || line.packSize === 0)) issues.push(`${prefix}packSize must be a positive whole number or null.`);
     if (line.unitPriceMinor !== null && !whole(line.unitPriceMinor)) issues.push(`${prefix}unitPriceMinor must be a nonnegative integer in paise or null.`);
@@ -66,11 +68,13 @@ export function reconcileLine(line: InvoiceLine): LineResult {
   const issues = validateCaseInput({ lines: [line] }).map(issue => issue.replace(/^Line 1: /, ''));
   if (!present(line.description)) issues.push('Add an item description.');
   if (!present(line.billedUnit)) issues.push('Choose the billed unit.');
+  if (!whole(line.billedQty)) issues.push('Enter the billed quantity from the invoice.');
   if (!line.confirmed) issues.push('Confirm the invoice and receiving counts.');
 
   const packed = requiresPackSize(line.billedUnit);
-  if (present(line.billedUnit) && !packed && !singleUnits.has(line.billedUnit.trim().toLowerCase())) issues.push('Choose unit/piece or a supported pack unit. Weighed goods are outside this workflow.');
-  const packSize = packed ? (whole(line.packSize) && line.packSize > 0 ? line.packSize : null) : 1;
+  const single = singleUnits.has(String(line.billedUnit ?? '').trim().toLowerCase());
+  if (present(line.billedUnit) && !packed && !single) issues.push('Choose unit/piece or a supported pack unit. Weighed goods are outside this workflow.');
+  const packSize = packed ? (whole(line.packSize) && line.packSize > 0 ? line.packSize : null) : single ? 1 : null;
   if (packed && packSize === null) issues.push('Confirm how many individual units are in each billed pack.');
   // A non-pack unit always means one physical unit. A stale pack size cannot silently alter its price.
   if (!packed && line.packSize !== null && line.packSize !== 1) issues.push('Use a pack/carton unit before setting a pack size above one.');
@@ -101,6 +105,7 @@ export function reconcileCase(record: ReceivingCase): Reconciliation {
   const issues: string[] = [];
   if (!present(record.supplier)) issues.push('Add the supplier name.');
   if (lines.length === 0) issues.push('Add at least one invoice line.');
+  if (lines.length > MAX_INVOICE_LINES) issues.push(`A case supports up to ${MAX_INVOICE_LINES} invoice lines.`);
   const duplicateIds = new Set<string>();
   for (const line of lines) {
     if (duplicateIds.has(line.lineId)) issues.push('Every invoice line must have a unique ID.');
