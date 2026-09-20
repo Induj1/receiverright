@@ -1,6 +1,6 @@
 # When an invoice says "carton," the arithmetic needs a human
 
-*AWS Builder Center draft. Not published. [Source](https://github.com/Induj1/receiverright) · [Deployed app](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com). Final deployment verification is in progress. Current mode: manual invoice entry and template summaries.*
+*AWS Builder Center draft. Not published. [Source](https://github.com/Induj1/receiverright) · [Deployed app](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com). Live AWS workflow, private evidence and Textract verified. Summaries use deterministic templates.*
 
 We built ReceiveRight around a small moment: a shop receives a delivery, and someone needs to decide whether what arrived matches the invoice. The original document, physical counts, photographs, and supplier's reply should be easy to understand together. Our project turns those pieces into one receiving record.
 
@@ -14,7 +14,7 @@ An invoice states what was billed. OCR can suggest what the document says, but i
 
 We put the original invoice beside editable lines, and require an explicit check on each item. Changing a quantity or price clears that line's confirmation. For cartons, packs, or boxes, the receiver must also confirm how many individual units correspond to the billed unit. Missing information stays visible instead of becoming an assumed zero.
 
-Our bundled sample includes an illustrated delivery and invoice labeled as synthetic. We do not present those assets as photographs of a customer delivery or as a successful Textract extraction.
+Our bundled sample is labeled synthetic. Separately, the deployed Textract integration processed the synthetic invoice PNG and returned three line items. That verifies one input, not general extraction accuracy or a customer delivery.
 
 ## Make the calculation inspectable
 
@@ -34,9 +34,9 @@ Evidence needs the same care. We attach the checked S3 object version, so a late
 
 ## Adapt the AWS deployment honestly
 
-Our original hosting plan used CloudFront with S3. During deployment, the account encountered a CloudFront verification restriction. Bedrock account verification was pending, and a real Textract request returned `SubscriptionRequiredException`. We disabled unavailable integrations and kept those constraints visible instead of relabeling a fallback as a successful model call.
+Our original hosting plan used CloudFront with S3, but initial account verification restricted that path. Textract returned `SubscriptionRequiredException` until an account upgrade resolved access. We then verified actual extraction through the deployed application. Bedrock still returned an operation-not-allowed error, so we kept its adapter disabled.
 
-We changed the deployment path to an API Gateway HTTP API invoking Lambda, with Lambda serving both the React interface and Express endpoints. DynamoDB persists records and sessions; a private, versioned S3 bucket holds evidence. The Textract and Bedrock adapters are disabled in this configuration. Invoice entry is manual, and summaries use deterministic templates.
+The deployed path uses API Gateway invoking Lambda, which serves both the React interface and Express endpoints. DynamoDB persists records and sessions; private, versioned S3 holds evidence; Textract supplies editable invoice suggestions. Manual entry remains available, and summaries use deterministic templates.
 
 ```mermaid
 flowchart LR
@@ -44,7 +44,7 @@ flowchart LR
   Gateway --> Lambda[Lambda: web app + API]
   Lambda --> DynamoDB
   Lambda --> S3[Private versioned evidence]
-  Lambda -. Disabled pending activation .-> Textract[Textract adapter]
+  Lambda --> Textract[Textract AnalyzeExpense]
   Lambda -. Optional, currently disabled .-> Bedrock
 ```
 
@@ -52,7 +52,7 @@ This also sharpened our AWS feedback. Account-readiness checks surfaced before d
 
 ## Test the decisions that matter
 
-Our initial automated suite contained 32 tests across reconciliation and the API. It covers pack ambiguity, missing observations, rounding, invalid allocations, workspace separation, stale revisions, PIN lockout, private evidence, upload idempotency, and the receiver-to-supplier lifecycle. A durable daily counter limits attempted AI calls independently of the in-memory HTTP rate limiter.
+Our 33 automated tests cover pack ambiguity, missing observations, rounding, invalid allocations, workspace separation, stale revisions, PIN lockout, private evidence, upload idempotency, and the receiving lifecycle. A separate live AWS smoke test verified the supplier response and closure, the ₹280 export, a byte-for-byte S3 evidence round trip, and three Textract invoice lines. A durable counter limits daily AI calls.
 
 We used OpenAI Codex substantially for implementation, interface work, tests, documentation, and review. That assistance is disclosed. Automated tests establish specific software behavior; they do not establish extraction accuracy, customer adoption, or money recovered.
 

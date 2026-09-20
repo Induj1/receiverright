@@ -155,7 +155,7 @@ def build(output: Path, site_url: str, test_count: int):
     header(pdf, 'IMPLEMENTATION  /  VERIFICATION  /  HANDOFF')
     paragraph(pdf, 'Built to keep the<br/>evidence honest.', MARGIN, 764, CONTENT, 29, GREEN, leading=34, bold=True)
     paragraph(pdf, 'React + TypeScript interface. Express API. Shared deterministic reconciliation. '
-              'AWS persistence with a complete manual receiving workflow.',
+              'AWS persistence and Textract suggestions with human-confirmed receiving counts.',
               MARGIN, 675, CONTENT, 10.5, MUTED, leading=15)
 
     label(pdf, 'CURRENT AWS DEPLOYMENT PATH', MARGIN, 623)
@@ -167,16 +167,16 @@ def build(output: Path, site_url: str, test_count: int):
     for index, (title, description) in enumerate([
         ('DynamoDB', 'Cases, sessions, review links, conditional writes'),
         ('Private versioned S3', 'Uploaded evidence tied to a checked object version'),
-        ('Manual + deterministic', 'Human entry and calculated summaries stay available'),
+        ('Amazon Textract', 'Editable invoice suggestions; human review is required'),
     ]):
         x = MARGIN + index * (card_width + gap)
         box(pdf, x, 482, card_width, 69)
         paragraph(pdf, title, x + 12, 537, card_width - 24, 9.4, INK, leading=13, bold=True)
         paragraph(pdf, description, x + 12, 518, card_width - 24, 8.3, MUTED, leading=11.7)
     box(pdf, MARGIN, 416, CONTENT, 52, colors.HexColor('#F6EDDA'))
-    paragraph(pdf, '<b>Service activation constraints:</b> Textract and Bedrock adapters are built but disabled '
-              'after real account/service access errors. CloudFront was attempted and blocked; the hosting '
-              'path above avoids that dependency. No successful live OCR/model use is claimed.',
+    paragraph(pdf, '<b>Live AWS verification:</b> Textract returned three lines from the synthetic invoice; '
+              'the private S3 evidence round trip and supplier workflow passed. Summaries use deterministic '
+              'templates. The optional Bedrock adapter remains disabled because model authorization is unavailable.',
               MARGIN + 12, 457, CONTENT - 24, 8.3, AMBER, leading=11.5)
 
     label(pdf, 'CHECKS THAT PROTECT THE WORKFLOW', MARGIN, 388)
@@ -187,7 +187,7 @@ def build(output: Path, site_url: str, test_count: int):
               'six-digit PINs with lockout; private evidence access. Responder names are self-reported. '
               'Browser workspaces have no account recovery.',
               MARGIN, 324, CONTENT, 9.4, INK, leading=13.8)
-    paragraph(pdf, f'<b>Automated verification.</b> The initial {test_count}-test suite covers quantity and money '
+    paragraph(pdf, f'<b>Automated verification.</b> The {test_count}-test suite covers quantity and money '
               'edge cases, the receiver/supplier lifecycle, access boundaries, stale revisions, upload '
               'handling and AI-call limits. Software tests do not establish real-world accuracy or impact.',
               MARGIN, 264, CONTENT, 9.4, INK, leading=13.8)
@@ -217,7 +217,7 @@ def build(output: Path, site_url: str, test_count: int):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--site-url', default='', help='Verified public HTTPS deployment URL')
-    parser.add_argument('--test-count', type=int, default=32)
+    parser.add_argument('--test-count', type=int, default=33)
     parser.add_argument('--output', type=Path, default=ROOT / 'output/pdf/ReceiveRight-Submission-Brief.pdf')
     args = parser.parse_args()
     if args.site_url and not args.site_url.startswith('https://'):

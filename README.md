@@ -9,7 +9,7 @@ Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted im
 | Submission resource | Status |
 | --- | --- |
 | Source repository | [github.com/Induj1/receiverright](https://github.com/Induj1/receiverright) |
-| Public deployment | [Open ReceiveRight](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) - AWS stack provisioned; final smoke verification in progress. Manual invoice entry and template summaries are enabled. |
+| Public deployment | [Open ReceiveRight](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) - live AWS workflow, private S3 evidence and Textract extraction verified. Summaries use deterministic templates. [Verification record](docs/VERIFICATION.md) |
 | Video demonstration | Recording/public or unlisted YouTube URL pending. [Recording script](docs/DEMO-SCRIPT.md) |
 | Submission answers | [Submission draft](docs/SUBMISSION.md) — replace clearly marked missing team details. |
 | API and types | [API contract](API-CONTRACT.md), [shared types](shared/types.ts) |
@@ -30,7 +30,7 @@ Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted im
 5. Acknowledge or dispute each affected line. A dispute requires a reason; the supplied responder name is explicitly self-reported.
 6. Return to the receiver record and **Refresh**. Close it after every affected line is acknowledged. Closure records agreement with the observations, not a refund, credit note, payment, or money recovered.
 
-The sample intentionally starts unconfirmed with an unresolved carton conversion. Synthetic sample assets do not run through Textract. Extraction currently requires account activation; once enabled and verified, test it by creating a record and uploading a supported invoice document of your own.
+The sample intentionally starts unconfirmed with an unresolved carton conversion. The prefilled sample fixture does not run through Textract. Separately, the synthetic invoice PNG was uploaded to private S3 and processed by the deployed Textract integration, which returned three line items. To test extraction yourself, create a record and upload a supported invoice document you have permission to use.
 
 ## What is implemented
 
@@ -74,7 +74,7 @@ Optional backend environment variables can be set in an uncommitted `.env` file:
 | `AWS_REGION` | Region for AWS SDK clients when running with AWS services. |
 | `TABLE_NAME` | Enables DynamoDB persistence. If omitted, local JSON storage is used. |
 | `EVIDENCE_BUCKET` | Enables versioned private S3 evidence storage. |
-| `TEXTRACT_ENABLED` | Explicitly enables Textract when service access is available; the current AWS deployment sets this to `false` because the account requires service activation. |
+| `TEXTRACT_ENABLED` | Explicitly enables Textract when service access is available; the verified AWS deployment enables extraction. |
 | `BEDROCK_MODEL_ID` | Optional enabled Bedrock model/inference profile supporting `Converse`. If omitted, summaries use deterministic templates. |
 | `MAX_DAILY_AI_CALLS` | Shared daily cap across extraction and Bedrock summaries; `50`. Failed provider calls still consume an attempt. |
 
@@ -89,13 +89,14 @@ flowchart LR
   L --> DB[DynamoDB: cases, sessions, shares]
   L --> S3[Private versioned S3 evidence]
   B -->|Short-lived upload URL| S3
-  L -. Adapter, disabled pending activation .-> TX[Textract AnalyzeExpense]
+  L --> TX[Textract AnalyzeExpense]
+  TX --> S3
   L -. Optional summary wording .-> BR[Amazon Bedrock]
 ```
 
-The current deployment route serves the React assets and Express API through the same API Gateway HTTPS endpoint and Lambda. DynamoDB keeps records and conditional writes; S3 stores private evidence. The Textract adapter is implemented, but an actual `AnalyzeExpense` request returned `SubscriptionRequiredException`; extraction is disabled until account activation is resolved. Manual invoice entry remains available. CloudFront/S3 static hosting was the initial design, but the account encountered a CloudFront verification restriction; it is not claimed as part of the running deployment. The Lambda hosting route preserves a public HTTPS application without that dependency.
+The current deployment serves the React assets and Express API through the same API Gateway HTTPS endpoint and Lambda. DynamoDB keeps records and conditional writes; S3 stores private evidence; Textract proposes invoice fields. A deployed `AnalyzeExpense` call successfully returned three line items from the synthetic test invoice. Manual entry remains available. CloudFront is not part of this deployment; API Gateway/Lambda provides the public HTTPS application entry point.
 
-Bedrock access was also unavailable during initial deployment work, so the live configuration leaves it disabled and uses deterministic summary templates. Its optional adapter never performs monetary calculations. The server's `/api/health` response identifies configured providers, not proof that every downstream service has passed a live availability check. See deployment outputs and verification records before claiming a live AWS result.
+Bedrock model authorization remains unavailable, so the live configuration leaves it disabled and uses deterministic summary templates. Its optional adapter never performs monetary calculations. Initial Textract service activation and CloudFront account restrictions shaped the deployment; the Textract restriction was resolved after the account upgrade. The server's `/api/health` response identifies configured providers. The [verification record](docs/VERIFICATION.md) distinguishes successful live operations from configured or optional capabilities.
 
 S3 evidence is tied to the exact object version checked at attachment time. Later uploads cannot silently change a reviewed evidence version. In local mode the file is sealed into a separate immutable snapshot before attachment.
 

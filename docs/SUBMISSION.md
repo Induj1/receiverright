@@ -30,7 +30,7 @@ https://github.com/Induj1/receiverright
 
 https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com
 
-The AWS stack is provisioned; final receiver/supplier smoke verification is in progress. Current runtime uses manual invoice entry and deterministic template summaries because Textract and Bedrock access remain blocked.
+The deployed receiver/supplier lifecycle, private S3 evidence and real Textract extraction passed the live API smoke test. Summaries use deterministic templates; the optional Bedrock adapter remains disabled because model authorization is unavailable.
 
 ## YouTube video demo link
 
@@ -50,9 +50,9 @@ Our synthetic demonstration shows a ₹200 shortage and ₹80 of damaged items, 
 
 Amazon API Gateway HTTP API provides the public HTTPS entry point, and AWS Lambda serves the React application and TypeScript/Express API. Amazon DynamoDB stores receiving cases, workspace sessions, supplier links, and responses. Conditional writes preserve revision consistency and reject stale concurrent updates.
 
-A separate private, versioned Amazon S3 bucket stores invoice and delivery evidence. Uploads use short-lived signed URLs, and attached evidence is tied to a checked S3 object version. We implemented an Amazon Textract AnalyzeExpense adapter for editable invoice suggestions and source locations, but an actual service call returned `SubscriptionRequiredException`. The current deployment disables extraction and supports manual invoice entry; we do not claim a successful live Textract result. The application calculates money in integer paise and requires explicit confirmation of pack conversions and counts.
+A separate private, versioned Amazon S3 bucket stores invoice and delivery evidence. Uploads use short-lived signed URLs, and attached evidence is tied to a checked S3 object version. Amazon Textract AnalyzeExpense returns editable invoice suggestions and source locations. Our deployed integration processed a synthetic invoice PNG from S3 and returned three line items, supplier and invoice fields; each suggestion still requires review. The application calculates money in integer paise and requires explicit confirmation of pack conversions and physical receiving counts.
 
-An optional Amazon Bedrock Converse adapter can draft neutral case-summary wording from the computed record. The current deployment leaves Bedrock disabled because account access was unavailable, and explicitly uses a deterministic template. CloudFront was attempted but not used after an account-verification restriction; API Gateway/Lambda provides the working hosting alternative. The interface identifies the configured providers. All included demonstration data is labeled synthetic, and the sample is not presented as a Textract result.
+An optional Amazon Bedrock Converse adapter can draft neutral case-summary wording from the computed record. The current deployment leaves Bedrock disabled because model authorization is unavailable, and explicitly uses deterministic templates. The interface identifies configured providers. All included demonstration data is labeled synthetic; the prefilled fixture is distinct from the separately verified Textract extraction.
 
 ## Blog links
 
@@ -85,7 +85,7 @@ Do not replace this with a claim that Induj manually wrote every part of the imp
 
 **Draft based on implementation work; revise with any additional observed deployment experience.**
 
-Our deployment encountered an account-verification restriction when creating CloudFront infrastructure. Bedrock account verification was pending, and an actual Textract call returned `SubscriptionRequiredException`. Clearer account-readiness and service-activation checks before a builder starts deployment would help, especially during a time-limited event. We adapted by serving the app through API Gateway/Lambda, retaining manual invoice entry and deterministic summaries. We are not claiming successful live CloudFront, Bedrock, or Textract usage.
+Our initial deployment encountered account/service gates: CloudFront creation was restricted, and Textract returned `SubscriptionRequiredException`. After the account upgrade, Textract succeeded, including through the deployed application. Bedrock model authorization still returned an operation-not-allowed error, so it remains disabled. Clearer account-readiness and service-activation checks before deployment would help during time-limited events. We retained API Gateway/Lambda hosting, manual-entry fallback and deterministic summaries.
 
 Preserving the exact evidence a supplier reviewed also required care. With S3, we combined browser CORS, signed upload requests, file-size/type checks, object versioning, and version-specific downloads. A single end-to-end example covering that complete browser-to-review workflow would make the integration easier.
 
@@ -97,7 +97,7 @@ Textract supplies suggested invoice fields, but the application still needs a re
 
 **Use after deployment verification; keep the answer aligned with services actually exercised.**
 
-DynamoDB's conditional writes give the API a clear way to reject stale changes instead of silently overwriting another saved record. S3 version IDs let us preserve the exact evidence snapshot attached to a receiving revision, while signed URLs keep the evidence bucket private. Textract's documented invoice-oriented response and source geometry informed our side-by-side review adapter, although account activation prevented us from verifying extraction live.
+DynamoDB's conditional writes give the API a clear way to reject stale changes instead of silently overwriting another saved record. S3 version IDs let us preserve the exact evidence snapshot attached to a receiving revision, while signed URLs keep the evidence bucket private. Our live smoke test uploaded and retrieved the same 246,251-byte synthetic PNG through authorized evidence access. Textract returned three line items and supplier/invoice fields from that document, fitting the editable review workflow. This verifies that input and integration, not general extraction accuracy.
 
 Lambda and API Gateway fit this application's short request/response workflow and let us serve both the mobile interface and API from one HTTPS entry point when our original CloudFront plan was blocked. We also liked being able to keep AI optional: the evidence workflow and deterministic calculations remain usable when extraction or generated summaries are unavailable.
 
