@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" role="img" aria-labelledby="title desc">
+  <title id="title">Synthetic delivery illustration</title>
+  <desc id="desc">Illustrated receiving bench showing ten water bottles, 24 biscuit packets including two marked as damaged, and 12 tea packets. This is a synthetic illustration, not photographic proof or a real delivery.</desc>
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#e6ebdc"/><stop offset="1" stop-color="#c7d4bb"/></linearGradient>
+    <linearGradient id="bench" x2="0" y2="1"><stop stop-color="#ceb79a"/><stop offset="1" stop-color="#b09778"/></linearGradient>
+    <linearGradient id="glass" x2="1" y2="0"><stop stop-color="#c8e1dc"/><stop offset=".5" stop-color="#ecf7ef"/><stop offset="1" stop-color="#9ebfb5"/></linearGradient>
+    <g id="bottle"><ellipse cx="15" cy="91" rx="17" ry="5" fill="#294636" opacity=".13"/><rect x="9" y="0" width="13" height="9" rx="3" fill="#376655"/><path d="M9 8h13v12l7 12v50q0 7-7 7H8q-7 0-7-7V32l8-12z" fill="url(#glass)" stroke="#8daa99"/><rect x="1" y="42" width="28" height="26" fill="#f8f5df"/><path d="M4 52l6-6 7 8 5-5 4 6" fill="none" stroke="#6c977f" stroke-width="2"/><path d="M6 73v7" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
+    <g id="biscuit"><rect width="34" height="46" rx="3" fill="#deaf5d" stroke="#ac7a39"/><path d="M2 5h30M2 40h30" stroke="#b9823b" stroke-width="2"/><rect x="4" y="13" width="26" height="20" rx="2" fill="#f7efd4"/><circle cx="17" cy="23" r="7" fill="#c49651"/><circle cx="14" cy="20" r="1" fill="#92703f"/><circle cx="20" cy="25" r="1" fill="#92703f"/></g>
+    <g id="tea"><rect width="32" height="42" rx="3" fill="#52775a" stroke="#345c43"/><rect x="4" y="8" width="24" height="26" rx="2" fill="#edebce"/><path d="M10 26q0-13 13-14-1 12-13 14" fill="#6e925c"/><path d="M11 27l9-11" stroke="#33583c"/></g>
+  </defs>
+  <rect width="1000" height="700" rx="16" fill="#f8f8ef"/>
+  <path d="M0 0h1000v74H0z" fill="#163f35"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="35" y="32" font-size="12" letter-spacing="2" fill="#bcd3b9">RECEIVERIGHT / DEMO EVIDENCE</text>
+    <text x="35" y="56" font-size="18" font-weight="700" fill="#fbf9e9">Receiving bench · DEMO-2026-042</text>
+    <rect x="30" y="99" width="940" height="443" rx="12" fill="url(#wall)"/>
+    <path d="M30 308h940v222q0 12-12 12H42q-12 0-12-12z" fill="url(#bench)"/>
+    <path d="M31 409h938M250 309l-48 234M722 309l54 234" stroke="#997e60" opacity=".2"/>
+    <path d="M63 171h276v65H63z" fill="#fbf9e8" opacity=".7"/>
+    <text x="80" y="196" font-size="11" font-weight="700" letter-spacing="1.6" fill="#667d61">RECEIVER OBSERVATION</text>
+    <text x="80" y="221" font-size="16" fill="#324f38">Counted by a person. Not AI verified.</text>
+    <ellipse cx="204" cy="403" rx="141" ry="41" fill="#594e37" opacity=".12"/>
+    <g transform="translate(88 272)"><use href="#bottle" x="0"/><use href="#bottle" x="45"/><use href="#bottle" x="90"/><use href="#bottle" x="135"/><use href="#bottle" x="180"/></g>
+    <g transform="translate(104 336)"><use href="#bottle" x="0"/><use href="#bottle" x="45"/><use href="#bottle" x="90"/><use href="#bottle" x="135"/><use href="#bottle" x="180"/></g>
+    <rect x="385" y="234" width="278" height="255" rx="5" fill="#ae865b" stroke="#926b42"/>
+    <path d="M385 235l-18-27h313l-17 27" fill="#c5a179" stroke="#aa845a"/>
+    <g transform="translate(398 249)"><use href="#biscuit" x="0"/><use href="#biscuit" x="42"/><use href="#biscuit" x="84"/><use href="#biscuit" x="126"/><use href="#biscuit" x="168"/><use href="#biscuit" x="210"/></g>
+    <g transform="translate(398 306)"><use href="#biscuit" x="0"/><use href="#biscuit" x="42"/><use href="#biscuit" x="84"/><use href="#biscuit" x="126"/><use href="#biscuit" x="168"/><use href="#biscuit" x="210"/></g>
+    <g transform="translate(398 363)"><use href="#biscuit" x="0"/><use href="#biscuit" x="42"/><use href="#biscuit" x="84"/><use href="#biscuit" x="126"/><use href="#biscuit" x="168"/><use href="#biscuit" x="210"/></g>
+    <g transform="translate(398 420)"><use href="#biscuit" x="0"/><use href="#biscuit" x="42"/><use href="#biscuit" x="84"/><use href="#biscuit" x="126"/><use href="#biscuit" x="168"/><use href="#biscuit" x="210"/></g>
+    <rect x="562" y="416" width="84" height="53" rx="5" fill="#bc593b" fill-opacity=".15" stroke="#b34d37" stroke-width="3" stroke-dasharray="5 4"/>
+    <path d="M573 429l16 28m-17-1 18-25M616 429l16 28m-17-1 18-25" stroke="#a74430" stroke-width="3"/>
+    <path d="M606 416v-23h95" fill="none" stroke="#a74430" stroke-width="2"/>
+    <rect x="696" y="374" width="154" height="34" rx="7" fill="#fcf0de"/>
+    <text x="773" y="396" text-anchor="middle" font-size="12" font-weight="700" fill="#944831">2 packets marked damaged</text>
+    <rect x="724" y="216" width="179" height="145" rx="5" fill="#ad8b64" stroke="#896b46"/>
+    <path d="M724 217l-14-22h210l-17 22" fill="#c7a87d" stroke="#ad8b64"/>
+    <g transform="translate(735 228)"><use href="#tea"/><use href="#tea" x="42"/><use href="#tea" x="84"/><use href="#tea" x="126"/></g>
+    <g transform="translate(735 270)"><use href="#tea"/><use href="#tea" x="42"/><use href="#tea" x="84"/><use href="#tea" x="126"/></g>
+    <g transform="translate(735 312)"><use href="#tea"/><use href="#tea" x="42"/><use href="#tea" x="84"/><use href="#tea" x="126"/></g>
+    <g font-size="13" fill="#344f38" font-weight="700">
+      <rect x="105" y="460" width="198" height="40" rx="7" fill="#faf7e6"/><text x="204" y="485" text-anchor="middle">Water · 10 bottles received</text>
+      <rect x="715" y="442" width="209" height="58" rx="7" fill="#faf7e6"/><text x="820" y="465" text-anchor="middle">Tea · 12 packets received</text><text x="820" y="486" text-anchor="middle" font-size="11" font-weight="400" fill="#94632f">Carton conversion unconfirmed</text>
+    </g>
+    <text x="525" y="516" text-anchor="middle" font-size="12" fill="#533e25" font-weight="700">Biscuits · 24 received, including 2 damaged</text>
+    <rect x="30" y="564" width="940" height="103" rx="10" fill="#eef1e4"/>
+    <circle cx="59" cy="594" r="7" fill="#bb8541"/>
+    <text x="78" y="600" font-size="14" font-weight="700" letter-spacing="1" fill="#5c6243">SYNTHETIC DEMO ILLUSTRATION</text>
+    <text x="50" y="627" font-size="13" fill="#70765d">This is an illustration, not a photograph or a real customer delivery. Counts are sample human observations.</text>
+    <text x="50" y="649" font-size="13" fill="#70765d">For real cases, attach your own item photographs. An image alone cannot verify hidden or missing quantities.</text>
+  </g>
+</svg>
