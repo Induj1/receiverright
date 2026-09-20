@@ -63,7 +63,9 @@ try {
     const result=await call(`/api/cases/${record.id}/summary`,{token:receiver,body:{}});assert.ok(result.summary.length>20);
     return {provider:result.provider,characters:result.summary.length};
   });
-  report.passed=true;
+  report.corePassed=true;
+  report.passed=!Object.values(report.providers).some(provider=>provider.status==='unavailable');
+  if(!report.passed) process.exitCode=2;
 } catch(error) {
   report.error={message:error.message,httpStatus:error.status ?? null};console.error(`FAIL ${error.message}`);process.exitCode=1;
 } finally {

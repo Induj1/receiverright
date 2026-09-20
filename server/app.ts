@@ -51,7 +51,12 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
   const getCase = async (workspaceId:string,caseId:string) => { const record = await store.get<ReceivingCase>(caseKey(workspaceId),caseSk(caseId)); if (!record) throw new HttpError(404,'Receiving case not found.'); return record; };
   const checkRevision = (stored:Stored<ReceivingCase>,revision:number) => { if(stored.value.revision!==revision) throw new HttpError(409,'This receiving record changed. Refresh before continuing.','REVISION_CONFLICT'); };
   const checkEditable = (record:ReceivingCase) => { if(record.status==='closed') throw new HttpError(409,'This case is closed and can no longer be edited.'); };
-  const putCase = async (stored:Stored<ReceivingCase>) => { stored.value.updatedAt=now(); await store.put(stored.pk,stored.sk,stored.value,stored.version); return stored.value; };
+  const checkRecordSize = (record:ReceivingCase) => {
+    // DynamoDB's complete item limit is 400 KB, including metadata and names.
+    // Reject oversize changes explicitly before storage, leaving the saved case intact.
+    if(Buffer.byteLength(JSON.stringify(record),'utf8')>350_000) throw new HttpError(413,'This receiving record has reached its size limit. Shorten long notes or split a large delivery into smaller receiving records. Export the existing record to preserve it.','CASE_SIZE_LIMIT');
+  };
+  const putCase = async (stored:Stored<ReceivingCase>) => { stored.value.updatedAt=now(); checkRecordSize(stored.value); await store.put(stored.pk,stored.sk,stored.value,stored.version); return stored.value; };
   const getShare = async (hash:string) => { const share = await store.get<Share>('SHARE',hash); if (!share || share.value.expiresAt<=seconds()) throw new HttpError(410,'This review link has expired or is unavailable.'); const record = await getCase(share.value.workspaceId,share.value.caseId); if(record.value.revision!==share.value.revision) throw new HttpError(409,'The receiver updated this case. Ask for a new review link.','STALE_SHARE'); return {share,record}; };
   const supplier = async (req:Request) => { const session = await store.get<SupplierSession>('SUPPLIER_SESSION',digest(bearer(req))); if(!session || session.value.expiresAt<=seconds()) throw new HttpError(401,'Unlock the review link with its PIN again.'); const {share,record} = await getShare(session.value.shareHash); if(share.value.revision!==session.value.revision) throw new HttpError(409,'This review session is no longer current.','STALE_SHARE'); return {session:session.value,share,record}; };
   const caseForRequest = (req:Request,res:Response) => getCase((res.locals.receiver as ReceiverSession).workspaceId,parameter(req,'id'));
@@ -84,6 +89,7 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
     const record:ReceivingCase = {id:caseId,caseNumber:`RR-${caseId.slice(0,8).toUpperCase()}`,supplier:'',supplierEmail:'',shopName:'',invoiceNumber:'',invoiceDate:'',status:'draft',revision:1,createdAt:timestamp,updatedAt:timestamp,currency:'INR',lines:[],evidence:[],history:[],responses:[],isDemo:false,extractionProvider:'manual',...body};
     const issues=validateCaseInput(record); if(issues.length) throw new HttpError(422,'Some receiving details are invalid.','INVALID_CASE',issues);
     history(record,actor(res),'created','Created an empty receiving record.');
+    checkRecordSize(record);
     await store.put(caseKey(res.locals.receiver.workspaceId),caseSk(record.id),record,null); res.status(201).json(record);
   });
   app.post('/api/cases/sample',async(req,res)=>{
