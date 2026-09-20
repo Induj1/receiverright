@@ -6,11 +6,15 @@ ReceiveRight brings a delivery invoice, the receiver's counts, supporting photog
 
 Built for **First Commit — AWS × WeMakeDevs, September 2026**. AI-assisted implementation is disclosed below. The included names, invoice, receiving observations, and delivery illustration are synthetic; no customer pilot or recovered-money result is claimed.
 
+![ReceiveRight deployed receiving workspace](docs/screenshots/overview.png)
+
+*Actual deployed interface. Demonstration data is synthetic.*
+
 | Submission resource | Status |
 | --- | --- |
 | Source repository | [github.com/Induj1/receiverright](https://github.com/Induj1/receiverright) |
 | Public deployment | [Open ReceiveRight](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com) - live AWS workflow, private S3 evidence and Textract extraction verified. Summaries use deterministic templates. [Verification record](docs/VERIFICATION.md) |
-| Video demonstration | Recording/public or unlisted YouTube URL pending. [Recording script](docs/DEMO-SCRIPT.md) |
+| Video demonstration | Narrated screenshot walkthrough prepared locally; public or unlisted YouTube URL pending. [Recording script](docs/DEMO-SCRIPT.md), [video renderer](docs/VIDEO-RENDERING.md) |
 | Submission answers | [Submission draft](docs/SUBMISSION.md) — replace clearly marked missing team details. |
 | API and types | [API contract](API-CONTRACT.md), [shared types](shared/types.ts) |
 
@@ -108,7 +112,7 @@ npm run build:lambda
 node scripts/deploy.mjs
 ```
 
-The script defaults to AWS profile `receiverright`, region `ap-south-1`, and stack `receiverright`; override them with `AWS_PROFILE`, `AWS_REGION`, and `STACK_NAME`. It writes local `deployment-outputs.json` containing the resulting service endpoints. AWS resources and provider calls can incur charges; the daily AI-call cap is a request limit, not a guaranteed currency budget.
+The script defaults to AWS profile `receiverright`, region `ap-south-1`, and stack `receiverright-app`; override them with `AWS_PROFILE`, `AWS_REGION`, and `STACK_NAME`. Set `TEXTRACT_ENABLED=true` in the deployment environment to enable extraction, including on updates; an unset value deploys manual-entry mode. Leave `BEDROCK_MODEL_ID` empty for the verified template-summary configuration. See the [deployment guide](docs/DEPLOYMENT.md) for PowerShell commands. The script writes local `deployment-outputs.json` containing the resulting service endpoints. AWS resources and provider calls can incur charges; the daily AI-call cap is a request limit, not a guaranteed currency budget.
 
 ## Calculation rules
 

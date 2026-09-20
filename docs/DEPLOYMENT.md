@@ -8,6 +8,8 @@ npm test
 npm run build
 npm run build:lambda
 aws login --profile receiverright --region ap-south-1
+$env:TEXTRACT_ENABLED = 'true'
+$env:BEDROCK_MODEL_ID = ''
 node scripts/deploy.mjs
 ```
 
@@ -32,4 +34,4 @@ S3 and DynamoDB data are retained when the CloudFormation stack is deleted, prev
 
 ## Update
 
-Build the frontend and Lambda again, then rerun node scripts/deploy.mjs. A new ZIP hash updates the Lambda code. Static assets use hashed filenames. No secrets or session tokens are included in build outputs.
+Build the frontend and Lambda again, set `$env:TEXTRACT_ENABLED = 'true'` to preserve the verified extraction configuration, then rerun `node scripts/deploy.mjs`. An unset `TEXTRACT_ENABLED` deploys manual-entry mode. Leave `BEDROCK_MODEL_ID` empty to use deterministic summaries. A new ZIP hash updates the Lambda code. Static assets use hashed filenames. No secrets or session tokens are included in build outputs.

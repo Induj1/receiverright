@@ -20,7 +20,7 @@ Resume URLs are needed for consideration for Amazon Fast Track Interviews. Do no
 
 ## Track
 
-**Ship it** — when the AWS deployment has been verified. The implemented architecture uses AWS cloud services. Do not claim a separate AWS open-source track integration that was not built.
+**Ship it** — the AWS deployment has been verified. The implemented architecture uses AWS cloud services. No separate AWS open-source track integration is claimed.
 
 ## GitHub link to project
 
@@ -46,8 +46,6 @@ Our synthetic demonstration shows a ₹200 shortage and ₹80 of damaged items, 
 
 ## How did you use AWS in your project?
 
-**Use this answer after verifying the deployed services; remove any service that is not actually deployed or exercised.**
-
 Amazon API Gateway HTTP API provides the public HTTPS entry point, and AWS Lambda serves the React application and TypeScript/Express API. Amazon DynamoDB stores receiving cases, workspace sessions, supplier links, and responses. Conditional writes preserve revision consistency and reject stale concurrent updates.
 
 A separate private, versioned Amazon S3 bucket stores invoice and delivery evidence. Uploads use short-lived signed URLs, and attached evidence is tied to a checked S3 object version. Amazon Textract AnalyzeExpense returns editable invoice suggestions and source locations. Our deployed integration processed a synthetic invoice PNG from S3 and returned three line items, supplier and invoice fields; each suggestion still requires review. The application calculates money in integer paise and requires explicit confirmation of pack conversions and physical receiving counts.
@@ -65,7 +63,7 @@ An optional Amazon Bedrock Converse adapter can draft neutral case-summary wordi
 
 ## Team leader's contributions
 
-**Factual draft:** Induj Gupta selected the problem direction, set the delivery-reconciliation scope, and directed the AI-assisted project implementation and submission preparation. OpenAI Codex substantially assisted with the frontend, backend, reconciliation logic, automated tests, documentation, and code review. Add Induj's personally completed testing, deployment, field-validation, presentation, or coding work after it has actually been done.
+**Factual draft:** Induj Gupta selected the problem direction, set the delivery-reconciliation scope, directed the AI-assisted project implementation and submission preparation, and completed AWS account sign-in and setup to enable deployment. OpenAI Codex substantially assisted with the frontend, backend, reconciliation logic, automated tests, deployment, browser verification, documentation, and code review. Add any further personally completed testing, field-validation, presentation, or coding work after it has actually been done.
 
 Do not replace this with a claim that Induj manually wrote every part of the implementation. Record human review and verification work specifically.
 
@@ -83,8 +81,6 @@ Do not replace this with a claim that Induj manually wrote every part of the imp
 
 ## Help us evaluate you: your feedback on the AWS services you used
 
-**Draft based on implementation work; revise with any additional observed deployment experience.**
-
 Our initial deployment encountered account/service gates: CloudFront creation was restricted, and Textract returned `SubscriptionRequiredException`. After the account upgrade, Textract succeeded, including through the deployed application. Bedrock model authorization still returned an operation-not-allowed error, so it remains disabled. Clearer account-readiness and service-activation checks before deployment would help during time-limited events. We retained API Gateway/Lambda hosting, manual-entry fallback and deterministic summaries.
 
 Preserving the exact evidence a supplier reviewed also required care. With S3, we combined browser CORS, signed upload requests, file-size/type checks, object versioning, and version-specific downloads. A single end-to-end example covering that complete browser-to-review workflow would make the integration easier.
@@ -94,8 +90,6 @@ DynamoDB conditional writes are useful, but business revision numbers and storag
 Textract supplies suggested invoice fields, but the application still needs a review interface for missing quantities, ambiguous units, and pack sizes. We would value more packaged-goods invoice examples explaining how to present uncertainty and unit conversions to the person reviewing extraction.
 
 ## What did you like about the AWS services you used?
-
-**Use after deployment verification; keep the answer aligned with services actually exercised.**
 
 DynamoDB's conditional writes give the API a clear way to reject stale changes instead of silently overwriting another saved record. S3 version IDs let us preserve the exact evidence snapshot attached to a receiving revision, while signed URLs keep the evidence bucket private. Our live smoke test uploaded and retrieved the same 246,251-byte synthetic PNG through authorized evidence access. Textract returned three line items and supplier/invoice fields from that document, fitting the editable review workflow. This verifies that input and integration, not general extraction accuracy.
 
