@@ -8,6 +8,7 @@ dist/
 tmp/
 output/video/
 output/submission/
+output/submission-final/
 coverage/
 deployment-outputs.json
 *.log

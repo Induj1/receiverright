@@ -1,41 +1,45 @@
-# ReceiveRight — 2 minute 45 second demo
+# Final recorded demo narration
 
-Target length: **2:45**. Leave at least 10 seconds below the three-minute submission limit. Record the deployed application with readable browser text. Use a clearly labeled synthetic sample; describe real-user validation only if it has actually occurred.
+Measured length: **166.023 seconds (2:46)**. The MP4 uses actual browser interactions with disclosed still-frame narration holds, synthetic data, and generated narration.
 
-## Prepare before recording
+ReceiveRight - recorded app interactions
+Generated narration: Microsoft David Desktop. Timestamped browser frames preserve captured interaction timing at normal speed; gaps between recorded sections are omitted. Extra narration time holds the first or last captured frame. Any explicit 30fps sampling is recorded in the render metadata. Demonstration data is synthetic.
 
-- Open the verified deployment in the receiver browser. Start a fresh workspace or an unused synthetic sample.
-- Keep a second browser/device available for supplier review. Use its PIN entry screen on camera; avoid displaying the receiver's access token or AWS credentials.
-- Keep a compact architecture view and the relevant AWS console resources ready in separate tabs. Show only services that were deployed and exercised.
-- Textract is now verified through the deployed application after the account upgrade: the synthetic invoice PNG returned three line items. Show that actual extraction view, while labeling the invoice synthetic. The prefilled sample and its SVG preview are separate from this actual AWS extraction.
-- Prepare the sample's carton conversion: one carton contains 12 tea packets. Water shortage is ₹200; two damaged biscuit packets are ₹80; final discrepancy is ₹280.
-- Do a complete unrecorded run once. Check that both views refresh successfully and that the chosen AWS provider works in the deployed region.
+## SECTION 1 - One shared delivery record (16.1s)
+For a small shop, delivery discrepancies are scattered across an invoice photo, a physical count, and messages. ReceiveRight turns them into one shared receiving record. This demonstration uses synthetic data.
 
-## Recording sequence
+## SECTION 2 - Request real invoice extraction (6.3s)
+We request real Amazon Textract extraction from the privately uploaded invoice.
 
-| Time | Show | Suggested narration |
-| --- | --- | --- |
-| 0:00–0:18 | Overview, then open the sample record | “A small shop receives a delivery. The invoice is on paper, the counts are in someone's head, and a shortage becomes a long message thread. ReceiveRight brings the invoice, observations, and supplier response into one record.” |
-| 0:18–0:35 | Synthetic banner, original invoice, actual Textract suggestion view | “This is labeled synthetic data. The original document stays beside editable item fields. Our deployed Textract integration extracted three lines from this test invoice. These remain suggestions: a person must confirm prices, units and what actually arrived.” |
-| 0:35–1:02 | Water and biscuits lines | “Twelve bottles were billed at one hundred rupees; ten arrived. That is two hundred rupees of missing item value. Twenty-four biscuit packets arrived, including two damaged ones. Damage is already inside the received count, so it is not counted as missing too. That adds eighty rupees.” |
-| 1:02–1:20 | Tea's unresolved carton, then enter 12 and confirm lines | “The tea invoice says one carton, while the receiver counted twelve packets. We block sharing until the pack size is confirmed. Twelve packets per carton resolves this line. The final calculated item discrepancy is two hundred and eighty rupees.” |
-| 1:20–1:47 | Create share, switch to supplier, enter PIN, acknowledge both lines | “The supplier receives a link and separate PIN for this saved revision. They can inspect the evidence and acknowledge or dispute each affected line. Their supplied name is recorded as self-reported.” |
-| 1:47–2:03 | Receiver refresh, visible responses, close, activity tab | “Both responses now appear on the receiver's record. Closing means the observations were acknowledged; it does not claim a refund. Later edits invalidate old review links, so agreement always refers to the version that was reviewed.” |
-| 2:03–2:29 | Architecture plus actual deployed AWS resources/provider indicator | “API Gateway provides HTTPS; Lambda serves the mobile app and API. DynamoDB keeps records and revision checks; private versioned S3 preserves evidence. Textract suggests invoice fields. Our code calculates money; summaries use deterministic templates. The optional Bedrock adapter remains disabled.” |
-| 2:29–2:45 | Final record on a narrow/mobile screen | “We learned to separate AI suggestions from human observations and deterministic calculations. ReceiveRight is built for the moment goods arrive: clear counts, shared evidence, and a recorded response. We used Codex substantially for implementation and testing.” |
+## SECTION 3 - Unknown means review, never assume (14.1s)
+Textract found the invoice rows, but could not identify the first billed unit. Unknown fields require review; received counts are never inferred. We choose bottle from the source and apply.
 
-Say **“Summaries currently use deterministic templates; a Bedrock adapter is available”** and do not imply successful Bedrock inference. Show the actual Textract suggestion screenshot or call, keeping the synthetic-data label. Replace architecture wording if the deployment changes.
+## SECTION 4 - Confirm the physical count (13.9s)
+The receiver enters what actually arrived, including damaged goods. A carton requires an explicit conversion: twelve packets here. Each line needs confirmation before sharing.
 
-The current hosting plan uses API Gateway and Lambda because the AWS account encountered a CloudFront verification restriction. CloudFront is not part of the current claimed deployment. If useful, mention the account restriction and working fallback as a short learning point; keep the product demonstration primary.
+## SECTION 5 - An inspectable 280-rupee discrepancy (17.3s)
+Two missing bottles add two hundred rupees. Two damaged biscuit packets add eighty. Damage stays inside the received total, so it is not counted twice. The calculation uses integer paise and excludes taxes and discounts.
 
-## Optional short cutaway
+## SECTION 6 - A supplier view of the exact saved revision (10.3s)
+A separate PIN unlocks the supplier view for this exact saved revision. The supplier can acknowledge or dispute each affected item with a written note.
 
-If time permits, replace 10 seconds of the architecture segment with a fresh supported invoice upload and the Textract suggestion dialog. Keep source confidence visible and explain that received counts still require a person. Do not substitute OCR latency, accuracy, or user savings claims that were not measured.
+## SECTION 7 - An acknowledgment, not an assumed refund (13.8s)
+The recorded response is tied to those quantities. The supplier name is self-reported. Acknowledgment records agreement with the observation; it does not issue a credit or confirm a refund.
 
-## Publication checklist
+## SECTION 8 - Close with a recorded response (9.1s)
+The receiver refreshes and closes the record only after every affected line is acknowledged. Closed records are read-only.
 
-- Export a final video no longer than **3:00**; verify the duration after upload.
-- Publish or make it unlisted on YouTube. Confirm the link opens without the team's account.
-- Show actual AWS use in the recording and include the repository/deployment links in the video description.
-- Label the sample as synthetic and include AI-assistance disclosure.
-- Add the verified YouTube URL to `docs/SUBMISSION.md` and the README. A local recording path is not a valid YouTube submission link.
+## SECTION 9 - Keep the earlier version in context (14.0s)
+Saved versions retain the earlier quantities, supplier responses, and attached evidence. Later edits require a fresh supplier review. Each retained version can be inspected and exported.
+
+## SECTION 10 - Return to the same workspace (12.0s)
+A privately saved recovery code restores the same workspace on another device, including this acknowledged delivery. Sessions can renew without losing saved records.
+
+## SECTION 11 - AWS services with a concrete purpose (19.8s)
+React and TypeScript run through API Gateway and Lambda. DynamoDB transactions save records and history together. Private, versioned S3 preserves evidence; Textract suggests invoice fields. Summaries use templates; Bedrock is disabled.
+
+## SECTION 12 - Measured limits, reproducible evidence (19.4s)
+We passed one hundred and three automated tests. Five synthetic invoices produced twelve of thirteen expected rows: one omission, so checking the original remains essential. No shop pilot is claimed. AI substantially assisted implementation and testing.
+
+
+Publication settings and current status: [Video publishing](VIDEO-PUBLISHING.md).

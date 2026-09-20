@@ -1,20 +1,20 @@
 # First Commit submission draft
 
-This file maps to the event's submission form. **TODO fields must be completed or left blank where optional before submission.** Team roster supplied by Induj: **Bro code**, four members. The supplied roster lists Harshita Nagesh as leader; the final leader selection awaits confirmation. This file does not submit the form.
+This file maps to the event's submission form. **TODO fields must be completed or left blank where optional before submission.** Team: **Bro code**, four members. Induj confirmed that he is the team leader on 20 September 2026. This file does not submit the form.
 
 ## Team details
 
 | Form field | Team leader | Second member | Third member | Fourth member |
 | --- | --- | --- | --- | --- |
-| Name for internal reference | **Harshita Nagesh** | **Rayyan Shaikh** | **Induj Gupta** | **Laavanya Gupta** |
-| WeMakeDevs username | hashh | theclazer | **indujgupta** (confirmed by Induj) | laavanya_gupta |
-| GitHub | **TODO: Harshita's GitHub URL — required leader field** | TODO: actual GitHub URL | https://github.com/Induj1 | TODO: actual GitHub URL |
-| LinkedIn | **TODO: Harshita's LinkedIn URL — required leader field** | TODO: actual LinkedIn URL | https://linkedin.com/in/induj-gupta-35382752 | TODO: actual LinkedIn URL |
-| Public resume | TODO: actual publicly accessible resume URL | TODO: actual publicly accessible resume URL | [Induj's resume](https://drive.google.com/file/d/1cpC_WRSW6VHzSTqkjatfut-t2u2n2jg8/view?usp=sharing) | TODO: actual publicly accessible resume URL |
+| Name for internal reference | **Induj Gupta** | **Harshita Nagesh** | **Rayyan Shaikh** | **Laavanya Gupta** |
+| WeMakeDevs username | **indujgupta** | hashh | theclazer | laavanya_gupta |
+| GitHub | https://github.com/Induj1 | Not supplied — leave blank | Not supplied — leave blank | Not supplied — leave blank |
+| LinkedIn | https://linkedin.com/in/induj-gupta-35382752 | Not supplied — leave blank | Not supplied — leave blank | Not supplied — leave blank |
+| Public resume | [Induj's resume](https://drive.google.com/file/d/1cpC_WRSW6VHzSTqkjatfut-t2u2n2jg8/view?usp=sharing) | Not supplied — leave blank | Not supplied — leave blank | Not supplied — leave blank |
 
 Resume URLs are needed for consideration for Amazon Fast Track Interviews. Do not publish a fabricated resume or a placeholder URL.
 
-Induj's resume opened successfully in the signed-out Google Drive viewer on 20 September 2026. The roster showed `@induj`, but Induj explicitly confirmed `indujgupta` as the actual WeMakeDevs username. Other usernames are transcribed from the supplied roster. Profile links must belong to the person in that column; Induj's profiles must not be submitted as Harshita's.
+Induj's resume opened successfully in the signed-out Google Drive viewer on 20 September 2026. Induj explicitly confirmed both `indujgupta` and his team-leader role. Other usernames are transcribed from the supplied roster. Profile links belong only to the person in that column.
 
 ## Project title
 
@@ -36,7 +36,7 @@ The deployed receiver/supplier lifecycle, private S3 evidence and real Textract 
 
 ## YouTube video demo link
 
-**TODO: public or unlisted YouTube video URL.** The finished local video is `output/video/ReceiveRight-Demo.mp4` (2:45.08, 1080p), with captions in `ReceiveRight-Demo.srt`. It is a narrated walkthrough of actual application screenshots, labeled synthetic demo. It has not been uploaded. [Ready-to-paste title and description](VIDEO-PUBLISHING.md) and a [live recording script](DEMO-SCRIPT.md) are included.
+**TODO: public or unlisted YouTube video URL.** The finished local video is `output/video/ReceiveRight-Live-Demo.mp4` (2:46.023, 1080p), with captions in `ReceiveRight-Live-Demo.srt`. It contains recorded application interactions, edited with disclosed still-frame narration holds, synthetic data, and generated narration. It has not yet been uploaded. [Ready-to-paste title and description](VIDEO-PUBLISHING.md) are included.
 
 ## What does your project do?
 
@@ -58,26 +58,26 @@ The deployed provider indicators show DynamoDB, Textract, and deterministic temp
 
 | Author | AWS Builder Center blog link |
 | --- | --- |
+| Induj Gupta | TODO: actual published Builder Center article URL, or leave blank |
 | Harshita Nagesh | Leave blank unless actually published |
 | Rayyan Shaikh | Leave blank unless actually published |
-| Induj Gupta | TODO: actual published Builder Center article URL, or leave blank |
 | Laavanya Gupta | Leave blank unless actually published |
 
 ## Team leader's contributions
 
-**Harshita Nagesh — TODO:** Confirm her actual completed contribution. The roster identifies her as leader; that alone does not establish coding, testing, or field-validation work.
+**Induj Gupta:** Set the delivery-reconciliation project scope, directed AI-assisted implementation and submission preparation, completed AWS account sign-in and setup, and coordinated the deployment and team/profile details. OpenAI Codex substantially assisted with implementation, tests, deployment, browser verification, documentation, and review.
 
 ## Second team member's contributions
 
-**Rayyan Shaikh — TODO:** No individual deliverables have been confirmed. Add actual completed work; otherwise leave the optional field blank.
+**Harshita Nagesh:** No individual deliverables have been confirmed. Leave this optional field blank until actual completed work is supplied.
 
 ## Third team member's contributions
 
-**Induj Gupta:** Selected the problem direction, set the delivery-reconciliation scope, directed the AI-assisted implementation and submission preparation, completed AWS account sign-in and setup, and supplied team/profile details. OpenAI Codex substantially assisted with implementation, tests, deployment, browser verification, documentation, and review. Add further personally completed testing, field-validation, presentation, or coding work only after it occurs.
+**Rayyan Shaikh:** No individual deliverables have been confirmed. Leave this optional field blank until actual completed work is supplied.
 
 ## Fourth team member's contributions
 
-**Laavanya Gupta — TODO:** No individual deliverables have been confirmed. Add actual completed work; otherwise leave the optional field blank.
+**Laavanya Gupta:** No individual deliverables have been confirmed. Leave this optional field blank until actual completed work is supplied.
 
 ## Help us evaluate you: your feedback on the AWS services you used
 
