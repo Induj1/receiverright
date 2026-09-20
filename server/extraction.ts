@@ -95,6 +95,7 @@ export function parseExpenseResult(result: AnalyzeExpenseResponse): ExtractionRe
   if (currencies.size) throw new ExtractionProblem(`Textract detected ${[...currencies].join(', ')} currency. This workflow prices packaged goods in INR only. Verify the source invoice before entering any INR values manually. No currency conversion was performed.`, 'UNSUPPORTED_CURRENCY');
   const warnings = [
     'Review every extracted field against the invoice. All rows are unconfirmed; receiving counts and pack sizes are never inferred.',
+    'OCR can omit entire invoice rows. Compare this list with the original and add missing items before confirming the delivery.',
     'Prices are suggestions in INR per billed unit. Verify currency, taxes, discounts, and whether the printed price is per pack or per piece.',
   ];
   const summary = (name: string, maximum: number) => {

@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-09-20T12:11:08.155Z",
+  "startedAt": "2026-09-20T12:58:03.969Z",
   "deploymentOrigin": "https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com",
   "checks": [
     {
@@ -12,6 +12,10 @@
       "region": "ap-south-1"
     },
     {
+      "name": "saved recovery restores the same workspace and renewal preserves access",
+      "status": "passed"
+    },
+    {
       "name": "isolated synthetic workspace",
       "status": "passed"
     },
@@ -21,6 +25,10 @@
     },
     {
       "name": "supplier review and response",
+      "status": "passed"
+    },
+    {
+      "name": "historical quantities and supplier acknowledgements survive a later edit",
       "status": "passed"
     },
     {
@@ -36,6 +44,10 @@
       "name": "private invoice upload and authorized read",
       "status": "passed",
       "bytes": 246251
+    },
+    {
+      "name": "historical evidence remains privately downloadable after a later edit",
+      "status": "passed"
     }
   ],
   "providers": {
@@ -43,7 +55,7 @@
       "status": "passed",
       "provider": "textract",
       "actualExtractedLineCount": 3,
-      "warningCount": 1,
+      "warningCount": 3,
       "hasSupplier": true,
       "hasInvoiceNumber": true
     },
@@ -53,6 +65,267 @@
       "characters": 302
     }
   },
+  "requests": [
+    {
+      "method": "GET",
+      "route": "/api/health",
+      "category": "core",
+      "clientElapsedMs": 2697.2,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/sessions",
+      "category": "core",
+      "clientElapsedMs": 283.4,
+      "httpStatus": 201
+    },
+    {
+      "method": "POST",
+      "route": "/api/workspace/recovery",
+      "category": "core",
+      "clientElapsedMs": 114.4,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/sample",
+      "category": "core",
+      "clientElapsedMs": 103,
+      "httpStatus": 201
+    },
+    {
+      "method": "POST",
+      "route": "/api/sessions/renew",
+      "category": "core",
+      "clientElapsedMs": 100.9,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/sessions/recover",
+      "category": "core",
+      "clientElapsedMs": 90.1,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/workspace",
+      "category": "core",
+      "clientElapsedMs": 145.5,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId",
+      "category": "core",
+      "clientElapsedMs": 59.8,
+      "httpStatus": 200
+    },
+    {
+      "method": "PUT",
+      "route": "/api/cases/:caseId",
+      "category": "core",
+      "clientElapsedMs": 132.7,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/ready",
+      "category": "core",
+      "clientElapsedMs": 115.1,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/share",
+      "category": "core",
+      "clientElapsedMs": 80.3,
+      "httpStatus": 201
+    },
+    {
+      "method": "POST",
+      "route": "/api/shares/:shareId/open",
+      "category": "core",
+      "clientElapsedMs": 97.9,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/shares/:shareId/respond",
+      "category": "core",
+      "clientElapsedMs": 88.2,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/revisions",
+      "category": "core",
+      "clientElapsedMs": 134.8,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/revisions/:snapshotId",
+      "category": "core",
+      "clientElapsedMs": 67.1,
+      "httpStatus": 200
+    },
+    {
+      "method": "PUT",
+      "route": "/api/cases/:caseId",
+      "category": "core",
+      "clientElapsedMs": 83.2,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/revisions/:snapshotId",
+      "category": "core",
+      "clientElapsedMs": 65.9,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/shares/:shareId",
+      "category": "core",
+      "clientElapsedMs": 138.4,
+      "httpStatus": 409
+    },
+    {
+      "method": "PUT",
+      "route": "/api/cases/:caseId",
+      "category": "core",
+      "clientElapsedMs": 82.8,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/share",
+      "category": "core",
+      "clientElapsedMs": 128.6,
+      "httpStatus": 201
+    },
+    {
+      "method": "POST",
+      "route": "/api/shares/:shareId/open",
+      "category": "core",
+      "clientElapsedMs": 98.9,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/shares/:shareId/respond",
+      "category": "core",
+      "clientElapsedMs": 88.5,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/close",
+      "category": "core",
+      "clientElapsedMs": 83.2,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/export?format=json",
+      "category": "core",
+      "clientElapsedMs": 70.2,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/export?format=csv",
+      "category": "core",
+      "clientElapsedMs": 57,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases",
+      "category": "core",
+      "clientElapsedMs": 66.1,
+      "httpStatus": 201
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads",
+      "category": "core",
+      "clientElapsedMs": 145.4,
+      "httpStatus": 201
+    },
+    {
+      "method": "PUT",
+      "route": "private-evidence-upload",
+      "category": "core",
+      "clientElapsedMs": 391.8,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/uploads/:uploadId/complete",
+      "category": "core",
+      "clientElapsedMs": 125.1,
+      "httpStatus": 201
+    },
+    {
+      "method": "GET",
+      "route": "/api/evidence/:evidenceId",
+      "category": "core",
+      "clientElapsedMs": 212.2,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/revisions",
+      "category": "core",
+      "clientElapsedMs": 75,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/revisions/:snapshotId",
+      "category": "core",
+      "clientElapsedMs": 58.1,
+      "httpStatus": 200
+    },
+    {
+      "method": "PUT",
+      "route": "/api/cases/:caseId",
+      "category": "core",
+      "clientElapsedMs": 90,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/cases/:caseId/revisions/:snapshotId",
+      "category": "core",
+      "clientElapsedMs": 76.8,
+      "httpStatus": 200
+    },
+    {
+      "method": "GET",
+      "route": "/api/evidence/:evidenceId",
+      "category": "core",
+      "clientElapsedMs": 224.3,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/extract",
+      "category": "provider",
+      "clientElapsedMs": 1968.7,
+      "httpStatus": 200
+    },
+    {
+      "method": "POST",
+      "route": "/api/cases/:caseId/summary",
+      "category": "provider",
+      "clientElapsedMs": 252.4,
+      "httpStatus": 200
+    }
+  ],
   "passed": true,
   "health": {
     "status": "ok",
@@ -63,5 +336,15 @@
     "region": "ap-south-1"
   },
   "corePassed": true,
-  "completedAt": "2026-09-20T12:11:18.264Z"
+  "completedAt": "2026-09-20T12:58:24.352Z",
+  "requestCount": 37,
+  "coreLatency": {
+    "requestCount": 35,
+    "minMs": 57,
+    "p50Ms": 97.9,
+    "p95Ms": 391.8,
+    "maxMs": 2697.2,
+    "meanMs": 190.6,
+    "note": "Single sequential synthetic run from this client. Includes network and response parsing, excludes intentional pacing. This is a functional smoke observation, not a load test or SLA."
+  }
 }

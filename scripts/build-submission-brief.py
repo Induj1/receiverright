@@ -89,15 +89,15 @@ def build(output: Path, site_url: str, test_count: int):
     output.parent.mkdir(parents=True, exist_ok=True)
     pdf = canvas.Canvas(str(output), pagesize=A4, pageCompression=1)
     pdf.setTitle('ReceiveRight - Submission Brief')
-    pdf.setAuthor('Induj Gupta / ReceiveRight')
-    pdf.setSubject('Implemented delivery reconciliation workflow for First Commit 2026')
+    pdf.setAuthor('Bro code / ReceiveRight')
+    pdf.setSubject('One shared, versioned delivery discrepancy record - First Commit 2026')
 
-    header(pdf, 'BUILT PROJECT  /  SUBMISSION BRIEF')
+    header(pdf, 'BRO CODE  /  FIRST COMMIT 2026  /  SHIP IT')
     paragraph(pdf, 'ReceiveRight', MARGIN, 764, CONTENT, 40, GREEN, leading=46, bold=True)
-    paragraph(pdf, "Know what arrived. Resolve what didn't.", MARGIN, 706, CONTENT, 17, INK, leading=22)
+    paragraph(pdf, 'One shared, versioned delivery record.', MARGIN, 706, CONTENT, 17, INK, leading=22)
     paragraph(pdf,
-              'A mobile-friendly receiving desk for small shops. Keep the invoice, physical counts, '
-              'supporting evidence, and supplier response together in one record.',
+              'For small shops receiving packaged goods. Bring the invoice, physical counts, '
+              'evidence, and supplier reply into a versioned record both sides can review.',
               MARGIN, 669, CONTENT, 11.2, MUTED, leading=16)
 
     label(pdf, 'ONE COMPLETE WORKFLOW', MARGIN, 611)
@@ -105,7 +105,7 @@ def build(output: Path, site_url: str, test_count: int):
     card_width = (CONTENT - 2 * gap) / 3
     card(pdf, MARGIN, 594, card_width, 'Capture', 'Upload the invoice and record the delivery observations.', '01')
     card(pdf, MARGIN + card_width + gap, 594, card_width, 'Confirm', 'Check counts, price and pack size. Review the visible calculation.', '02')
-    card(pdf, MARGIN + 2 * (card_width + gap), 594, card_width, 'Resolve', 'Share a protected link. Record the supplier response to this revision.', '03')
+    card(pdf, MARGIN + 2 * (card_width + gap), 594, card_width, 'Review together', 'Share a protected link. Preserve the response and reviewed version.', '03')
 
     label(pdf, 'A SMALL EXAMPLE WITH A VERIFIABLE RESULT', MARGIN, 475)
     top = 458
@@ -135,27 +135,27 @@ def build(output: Path, site_url: str, test_count: int):
     pdf.drawString(MARGIN + 14, 268, 'Calculated item value. Tax and discounts excluded.')
 
     label(pdf, 'WHAT MAKES THE RECORD USEFUL', MARGIN, 232)
-    paragraph(pdf, '<b>Human confirmation</b><br/>Unknown counts and pack sizes remain unresolved. '
-              'Damaged and wrong units are already included in the physical received count.',
+    paragraph(pdf, '<b>Before sharing</b><br/>Unknown counts, units and pack sizes stay unresolved. '
+              'The receiver confirms the invoice and physical observations.',
               MARGIN, 216, 239, 9.5, INK, leading=14)
-    paragraph(pdf, '<b>A supplier response that stays attached</b><br/>A separate PIN protects a '
-              'revision-specific review. The supplier can acknowledge or dispute each affected item.',
+    paragraph(pdf, '<b>A response to one version</b><br/>A later edit preserves the old quantities, '
+              'evidence references and supplier replies in saved history.',
               MARGIN + 267, 216, CONTENT - 267, 9.5, INK, leading=14)
-    paragraph(pdf, '<b>Evidence and exports</b><br/>Private uploads, source previews, item photographs, '
-              'activity history, CSV/JSON, and browser print-to-PDF.',
+    paragraph(pdf, '<b>Return to the record</b><br/>A privately saved recovery code restores the '
+              'workspace on another browser. Active sessions can be renewed.',
               MARGIN, 143, 239, 9.5, INK, leading=14)
-    paragraph(pdf, '<b>An honest outcome</b><br/>Closing means the discrepancy was acknowledged. '
-              'It does not claim payment, a refund, or money recovered.',
+    paragraph(pdf, '<b>A precise outcome</b><br/>The supplier acknowledges or disputes affected items. '
+              'Closure records agreement, not a refund or payment.',
               MARGIN + 267, 143, CONTENT - 267, 9.5, INK, leading=14)
-    paragraph(pdf, 'Demo status: synthetic invoice, names and receiving illustration. No real-shop pilot or measured customer outcome is claimed.',
+    paragraph(pdf, 'Product hypothesis: one shared reference reduces reconstruction across messages. Synthetic demo; a real shop/supplier trial is still pending.',
               MARGIN, 75, CONTENT, 7.7, MUTED, leading=10)
     footer(pdf, 1, bool(site_url))
     pdf.showPage()
 
     header(pdf, 'IMPLEMENTATION  /  VERIFICATION  /  HANDOFF')
-    paragraph(pdf, 'Built to keep the<br/>evidence honest.', MARGIN, 764, CONTENT, 29, GREEN, leading=34, bold=True)
+    paragraph(pdf, 'Proof behind<br/>the shared record.', MARGIN, 764, CONTENT, 29, GREEN, leading=34, bold=True)
     paragraph(pdf, 'React + TypeScript interface. Express API. Shared deterministic reconciliation. '
-              'AWS persistence and Textract suggestions with human-confirmed receiving counts.',
+              'Five working AWS integrations. Human-reviewed extraction and retained record history.',
               MARGIN, 675, CONTENT, 10.5, MUTED, leading=15)
 
     label(pdf, 'CURRENT AWS DEPLOYMENT PATH', MARGIN, 623)
@@ -165,7 +165,7 @@ def build(output: Path, site_url: str, test_count: int):
         pdf.setStrokeColor(colors.HexColor('#8BA68B'))
         pdf.line(center, 566, center, 551)
     for index, (title, description) in enumerate([
-        ('DynamoDB', 'Cases, sessions, review links, conditional writes'),
+        ('DynamoDB', 'Cases, saved states, recovery and transactional writes'),
         ('Private versioned S3', 'Uploaded evidence tied to a checked object version'),
         ('Amazon Textract', 'Editable invoice suggestions; human review is required'),
     ]):
@@ -174,40 +174,45 @@ def build(output: Path, site_url: str, test_count: int):
         paragraph(pdf, title, x + 12, 537, card_width - 24, 9.4, INK, leading=13, bold=True)
         paragraph(pdf, description, x + 12, 518, card_width - 24, 8.3, MUTED, leading=11.7)
     box(pdf, MARGIN, 416, CONTENT, 52, colors.HexColor('#F6EDDA'))
-    paragraph(pdf, '<b>Live AWS verification:</b> Textract returned three lines from the synthetic invoice; '
-              'the private S3 evidence round trip and supplier workflow passed. Summaries use deterministic '
-              'templates. The optional Bedrock adapter remains disabled because model authorization is unavailable.',
+    paragraph(pdf, '<b>Modeled core cost:</b> USD 10.35 per 1,000 one-page invoices under stated workload '
+              'assumptions. Excludes S3 requests, logs, transfer, deployment artifacts, operations and taxes. '
+              'This is a core-service subtotal, not total cost of ownership or a spending cap.',
               MARGIN + 12, 457, CONTENT - 24, 8.3, AMBER, leading=11.5)
 
-    label(pdf, 'CHECKS THAT PROTECT THE WORKFLOW', MARGIN, 388)
-    paragraph(pdf, '<b>Record consistency.</b> Edits invalidate old supplier invitations. Concurrent writes '
-              'reject stale changes. Supplier decisions refer to the reviewed revision.',
+    label(pdf, 'EVIDENCE THAT CAN BE INSPECTED', MARGIN, 388)
+    paragraph(pdf, f'<b>{test_count} automated tests passed.</b> Domain arithmetic, extraction parsing, '
+              'API access, recovery and saved history are covered. Frontend and Lambda builds passed. '
+              'Software tests do not establish customer impact.',
               MARGIN, 372, CONTENT, 9.4, INK, leading=13.8)
-    paragraph(pdf, '<b>Defined access.</b> Workspace-scoped receiver tokens; 48-hour supplier links; '
-              'six-digit PINs with lockout; private evidence access. Responder names are self-reported. '
-              'Browser workspaces have no account recovery.',
+    paragraph(pdf, '<b>Live AWS workflow passed.</b> Recovery and renewal; supplier acknowledgement; '
+              'a later edit with historical responses retained; private historical evidence; closure '
+              'and exports. PIN access does not independently verify supplier identity.',
               MARGIN, 324, CONTENT, 9.4, INK, leading=13.8)
-    paragraph(pdf, f'<b>Automated verification.</b> The {test_count}-test suite covers quantity and money '
-              'edge cases, the receiver/supplier lifecycle, access boundaries, stale revisions, upload '
-              'handling and AI-call limits. Software tests do not establish real-world accuracy or impact.',
-              MARGIN, 264, CONTENT, 9.4, INK, leading=13.8)
+    paragraph(pdf, '<b>Five-image live OCR evaluation.</b> 12 of 13 printed rows returned. One blank-quantity '
+              'row was omitted; two units stayed unknown. The UI requires review against the whole invoice. '
+              'This tiny synthetic set is not representative accuracy; failures are published.',
+              MARGIN, 276, CONTENT, 9.4, INK, leading=13.8)
 
-    label(pdf, 'OPEN THE PROJECT', MARGIN, 200)
+    label(pdf, 'OPEN THE PROJECT', MARGIN, 213)
     repo = 'https://github.com/Induj1/receiverright'
     paragraph(pdf, f'<b>Repository</b>  <link href="{repo}" color="#1F5C48">{repo}</link>',
-              MARGIN, 184, CONTENT, 9.2, INK, leading=14)
+              MARGIN, 197, CONTENT, 9.2, INK, leading=14)
     if site_url:
         paragraph(pdf, f'<b>Live app</b>  <link href="{escape(site_url)}" color="#1F5C48">{escape(site_url)}</link>',
-                  MARGIN, 162, CONTENT, 9.2, INK, leading=14)
+                  MARGIN, 175, CONTENT, 9.2, INK, leading=14)
     else:
         paragraph(pdf, '<b>Live app</b>  Deployment verification pending. Add the verified public HTTPS URL.',
-                  MARGIN, 162, CONTENT, 9.2, AMBER, leading=14)
-    paragraph(pdf, '<b>Team leader</b>  Induj Gupta  /  github.com/Induj1<br/>'
-              '<b>Handoff</b>  Full form answers and a 2:45 recording script are in docs/. '
-              'YouTube publication and remaining teammate details are pending.',
-              MARGIN, 137, CONTENT, 8.7, MUTED, leading=13)
-    paragraph(pdf, 'AI assistance: OpenAI Codex substantially assisted implementation, tests, interface work, documentation and review. '
-              'Contributions and competition claims must reflect work actually completed.',
+                  MARGIN, 175, CONTENT, 9.2, AMBER, leading=14)
+    paragraph(pdf, f'<b>Evidence</b>  <link href="{repo}/blob/main/docs/INVOICE-EVALUATION.md" color="#1F5C48">Invoice evaluation</link>'
+              f'  /  <link href="{repo}/blob/main/docs/OPERATING-COST.md" color="#1F5C48">Cost assumptions</link>'
+              f'  /  <link href="{repo}/blob/main/docs/VERIFICATION.md" color="#1F5C48">Verification record</link>',
+              MARGIN, 152, CONTENT, 9.2, INK, leading=14)
+    paragraph(pdf, '<b>Bro code</b>  Harshita Nagesh, Rayyan Shaikh, Induj Gupta, Laavanya gupta.<br/>'
+              'Live interaction video is being finalized. User-trial protocol and individual learning '
+              'worksheet are included; uncompleted contributions are not claimed.',
+              MARGIN, 127, CONTENT, 8.5, MUTED, leading=12.5)
+    paragraph(pdf, 'OpenAI Codex substantially assisted implementation, tests, interface work, documentation and review. '
+              'All demo data is synthetic. Summaries use templates; optional Bedrock is disabled.',
               MARGIN, 84, CONTENT, 7.7, MUTED, leading=10.5)
     footer(pdf, 2, bool(site_url))
     pdf.save()
@@ -217,7 +222,7 @@ def build(output: Path, site_url: str, test_count: int):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--site-url', default='', help='Verified public HTTPS deployment URL')
-    parser.add_argument('--test-count', type=int, default=33)
+    parser.add_argument('--test-count', type=int, default=102)
     parser.add_argument('--output', type=Path, default=ROOT / 'output/pdf/ReceiveRight-Submission-Brief.pdf')
     args = parser.parse_args()
     if args.site_url and not args.site_url.startswith('https://'):
