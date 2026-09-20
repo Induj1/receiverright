@@ -43,6 +43,15 @@ describe('conservative invoice field parsing', () => {
     expect(result.warnings.join(' ')).toContain('Billed quantity was not recognized');
   });
 
+  it('keeps OCR warnings separate from the receiver observation shown to suppliers', () => {
+    const result = parseExpenseResult(invoice(item(field('QUANTITY', '12'), field('UNIT_PRICE', '100.00'))));
+    expect(result.warnings.join(' ')).toContain('Billed unit was not recognized');
+    expect(result.lines[0].note).toBe('');
+    const reviewed = { ...result.lines[0], billedUnit: 'piece', receivedQty: 10, confirmed: true, note: 'I counted 10 sealed bottles at the receiving desk.' };
+    expect(reconcileLine(reviewed).ready).toBe(true);
+    expect(reviewed.note).toBe('I counted 10 sealed bottles at the receiving desk.');
+  });
+
   it('keeps a genuine zero distinct from a missing value', () => {
     const result = parseExpenseResult(invoice(item(field('QUANTITY', '0 pcs'), field('UNIT_PRICE', '0.00'))));
     expect(result.lines[0]).toMatchObject({ billedQty: 0, billedUnit: 'piece', unitPriceMinor: 0, receivedQty: null, confirmed: false });

@@ -142,7 +142,10 @@ export function parseExpenseResult(result: AnalyzeExpenseResponse): ExtractionRe
     return {
       id: randomUUID(), description: description.slice(0, 300), sku: text(field('PRODUCT_CODE')).slice(0, 100),
       billedQty, billedUnit, packSize: null, receivedQty: null, damagedQty: 0, wrongQty: 0,
-      unitPriceMinor, confirmed: false, note: notes.join(' ').slice(0, 500), ...(source ? { source } : {}),
+      // Receiving notes belong to the person recording the delivery. Machine
+      // warnings stay in ExtractionResult.warnings, never in a supplier-facing
+      // observation that could become stale after the suggestion is corrected.
+      unitPriceMinor, confirmed: false, note: '', ...(source ? { source } : {}),
     };
   });
   if (!lines.length) warnings.push('No item rows were recognized. Add the lines manually; an empty extraction does not mean the invoice has no items.');
