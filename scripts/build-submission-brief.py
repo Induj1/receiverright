@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from urllib.parse import urlparse
 from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
@@ -85,7 +86,7 @@ def card(pdf, x, top, width, title, text, number):
     paragraph(pdf, text, x + 13, top - 47, width - 26, 8.3, MUTED, leading=11.5)
 
 
-def build(output: Path, site_url: str, test_count: int):
+def build(output: Path, site_url: str, test_count: int, youtube_url: str = ''):
     output.parent.mkdir(parents=True, exist_ok=True)
     pdf = canvas.Canvas(str(output), pagesize=A4, pageCompression=1)
     pdf.setTitle('ReceiveRight - Submission Brief')
@@ -207,9 +208,10 @@ def build(output: Path, site_url: str, test_count: int):
               f'  /  <link href="{repo}/blob/main/docs/OPERATING-COST.md" color="#1F5C48">Cost assumptions</link>'
               f'  /  <link href="{repo}/blob/main/docs/VERIFICATION.md" color="#1F5C48">Verification record</link>',
               MARGIN, 152, CONTENT, 9.2, INK, leading=14)
-    paragraph(pdf, '<b>Bro code</b>  Harshita Nagesh, Rayyan Shaikh, Induj Gupta, Laavanya gupta.<br/>'
-              'Live interaction video is being finalized. User-trial protocol and individual learning '
-              'worksheet are included; uncompleted contributions are not claimed.',
+    video_status = (f'<link href="{escape(youtube_url)}" color="#1F5C48">Watch on YouTube</link>.'
+                    if youtube_url else 'YouTube upload pending.')
+    paragraph(pdf, '<b>Bro code</b>  Induj Gupta (team lead), Harshita Nagesh, Rayyan Shaikh, Laavanya Gupta.<br/>'
+              '<b>Demo</b>  2:46 edited browser interactions; narration holds disclosed. ' + video_status,
               MARGIN, 127, CONTENT, 8.5, MUTED, leading=12.5)
     paragraph(pdf, 'OpenAI Codex substantially assisted implementation, tests, interface work, documentation and review. '
               'All demo data is synthetic. Summaries use templates; optional Bedrock is disabled.',
@@ -223,8 +225,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--site-url', default='', help='Verified public HTTPS deployment URL')
     parser.add_argument('--test-count', type=int, default=103)
+    parser.add_argument('--youtube-url', default='', help='Verified published or unlisted YouTube demo URL; omit while upload is pending')
     parser.add_argument('--output', type=Path, default=ROOT / 'output/pdf/ReceiveRight-Submission-Brief.pdf')
     args = parser.parse_args()
     if args.site_url and not args.site_url.startswith('https://'):
         parser.error('--site-url must be a verified HTTPS URL')
-    build(args.output, args.site_url, args.test_count)
+    if args.youtube_url:
+        video_url = urlparse(args.youtube_url)
+        if video_url.scheme != 'https' or video_url.hostname not in {'youtube.com', 'www.youtube.com', 'youtu.be'}:
+            parser.error('--youtube-url must be a verified HTTPS YouTube URL')
+    build(args.output, args.site_url, args.test_count, args.youtube_url)
