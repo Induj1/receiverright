@@ -217,10 +217,11 @@ export default function App() {
   ]);
   async function changeWorkspace(next: Session) {
     if (session?.workspaceId === next.workspaceId) {
-      const workspace =
-        next.token !== session.token
-          ? await api<WorkspaceAccessStatus>("/workspace", {}, next.token)
-          : access;
+      const workspace = await api<WorkspaceAccessStatus>(
+        "/workspace",
+        {},
+        next.token,
+      );
       if (sessionExpired) await loadCases(next.token);
       storeSession(next);
       setSession(next);

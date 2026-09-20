@@ -27,8 +27,8 @@ An invoice photo and a message can start a conversation. ReceiveRight adds a str
 2. Review the three synthetic invoice lines beside their receiving counts. The water line has two missing units; the biscuits line has two damaged units already included in the 24 received.
 3. Enter **12** as the tea carton size, check the invoice and counts, confirm each line, and save. The item-value discrepancy is **INR 280**: INR 200 for the water plus INR 80 for the biscuits.
 4. Create a supplier review link. Open it in a separate browser or device and unlock it with the separate PIN. Acknowledge or dispute each affected line.
-5. Return to the receiver view and refresh. Inspect **Saved history**; a later edit preserves the earlier record and supplier responses. When every affected line is acknowledged, close the record.
-6. Open **Workspace access**, generate a recovery code, and save it privately outside this browser. Use it to restore the same workspace after a session expires or on another device.
+5. Return to the receiver view and refresh. Inspect **Saved versions**; a later edit preserves the earlier record and supplier responses. When every affected line is acknowledged, close the record.
+6. Open **Workspace settings**, generate a recovery code, and save it privately outside this browser. Use it to restore the same workspace after a session expires or on another device.
 
 Closing records agreement with the observations. It does not record a refund, credit note, payment, or recovered money. The prefilled sample is synthetic and does not pretend to be a fresh Textract result.
 

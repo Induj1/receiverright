@@ -210,7 +210,7 @@ export default function CaseDetail({
     try {
       await action();
     } catch (e) {
-      if (e instanceof ApiError && e.status === 409)
+      if (e instanceof ApiError && e.code === "REVISION_CONFLICT")
         setError(
           "This record changed in another window. Your edits are still here. Copy anything you need, then reload the latest record before saving.",
         );
