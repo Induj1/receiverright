@@ -138,6 +138,6 @@ Integer-paise arithmetic rounds half up once per complete line. A known zero is 
 
 ## Team and AI assistance
 
-**Bro code:** Harshita Nagesh, Rayyan Shaikh, Induj Gupta, and Laavanya gupta. Submission leadership and individual contribution statements must follow the final verified team details.
+**Bro code:** [Harshita Nagesh](https://github.com/hash066) (team lead; [LinkedIn](https://www.linkedin.com/in/harshita-nagesh)), [Induj Gupta](https://github.com/Induj1), Rayyan Shaikh, and Laavanya Gupta. Individual roles and confirmed contributions are recorded in the [submission answers](docs/SUBMISSION.md).
 
 OpenAI Codex substantially assisted implementation, tests, interface work, documentation, and review. That assistance is disclosed. The team should record what each person actually inspected, tested, changed, and learned in [TEAM-LEARNING.md](docs/TEAM-LEARNING.md); proposed responsibilities are not completed contributions.

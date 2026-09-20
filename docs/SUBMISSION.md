@@ -1,20 +1,20 @@
 # First Commit submission draft
 
-This file maps to the event's submission form. **TODO fields must be completed or left blank where optional before submission.** Team: **Bro code**, four members. Induj confirmed that he is the team leader on 20 September 2026. This file does not submit the form.
+This file maps to the event's submission form. **TODO fields must be completed or left blank where optional before submission.** Team: **Bro code**, four members. The latest team details confirm **Harshita Nagesh** as team leader. This file does not submit the form.
 
 ## Team details
 
 | Form field | Team leader | Second member | Third member | Fourth member |
 | --- | --- | --- | --- | --- |
-| Name for internal reference | **Induj Gupta** | **Harshita Nagesh** | **Rayyan Shaikh** | **Laavanya Gupta** |
-| WeMakeDevs username | **indujgupta** | hashh | theclazer | laavanya_gupta |
-| GitHub | https://github.com/Induj1 | Not supplied — leave blank | Not supplied — leave blank | Not supplied — leave blank |
-| LinkedIn | https://linkedin.com/in/induj-gupta-35382752 | Not supplied — leave blank | Not supplied — leave blank | Not supplied — leave blank |
-| Public resume | [Induj's resume](https://drive.google.com/file/d/1cpC_WRSW6VHzSTqkjatfut-t2u2n2jg8/view?usp=sharing) | Not supplied — leave blank | Not supplied — leave blank | Not supplied — leave blank |
+| Name for internal reference | **Harshita Nagesh** | **Induj Gupta** | **Rayyan Shaikh** | **Laavanya Gupta** |
+| WeMakeDevs username | **hashh** | indujgupta | theclazer | laavanya_gupta |
+| GitHub | https://github.com/hash066 | https://github.com/Induj1 | Not supplied — leave blank | Not supplied — leave blank |
+| LinkedIn | https://www.linkedin.com/in/harshita-nagesh | https://linkedin.com/in/induj-gupta-35382752 | Not supplied — leave blank | Not supplied — leave blank |
+| Public resume | Not supplied — leave blank | [Induj's resume](https://drive.google.com/file/d/1cpC_WRSW6VHzSTqkjatfut-t2u2n2jg8/view?usp=sharing) | Not supplied — leave blank | Not supplied — leave blank |
 
 Resume URLs are needed for consideration for Amazon Fast Track Interviews. Do not publish a fabricated resume or a placeholder URL.
 
-Induj's resume opened successfully in the signed-out Google Drive viewer on 20 September 2026. Induj explicitly confirmed both `indujgupta` and his team-leader role. Other usernames are transcribed from the supplied roster. Profile links belong only to the person in that column.
+Induj confirmed his username as `indujgupta`; his resume opened in the signed-out Google Drive viewer on 20 September 2026. Harshita's username `hashh` comes from the supplied roster, and her leadership and profile links were supplied in the latest correction. Her GitHub profile displays Harshita Nagesh and links to the supplied LinkedIn profile. The GitHub link is normalized to the profile URL without date filters. Each profile and resume belongs only to the person in its column.
 
 ## Project title
 
@@ -60,18 +60,20 @@ The deployed provider indicators show DynamoDB, Textract, and deterministic temp
 
 | Author | AWS Builder Center blog link |
 | --- | --- |
-| Induj Gupta | TODO: actual published Builder Center article URL, or leave blank |
 | Harshita Nagesh | Leave blank unless actually published |
+| Induj Gupta | TODO: actual published Builder Center article URL, or leave blank |
 | Rayyan Shaikh | Leave blank unless actually published |
 | Laavanya Gupta | Leave blank unless actually published |
 
 ## Team leader's contributions
 
-**Induj Gupta:** Set the delivery-reconciliation project scope, directed AI-assisted implementation and submission preparation, completed AWS account sign-in and setup, and coordinated the deployment and team/profile details. OpenAI Codex substantially assisted with implementation, tests, deployment, browser verification, documentation, and review.
+**Harshita Nagesh:** Team lead for Bro code.
+
+Only her leadership role has been confirmed. No additional coding, testing, deployment, or field-validation deliverables are attributed to her without further details.
 
 ## Second team member's contributions
 
-**Harshita Nagesh:** No individual deliverables have been confirmed. Leave this optional field blank until actual completed work is supplied.
+**Induj Gupta:** Set the delivery-reconciliation project scope, directed AI-assisted implementation and submission preparation, completed AWS account sign-in and setup, and coordinated the deployment and team/profile details. OpenAI Codex substantially assisted with implementation, tests, deployment, browser verification, documentation, and review.
 
 ## Third team member's contributions
 
@@ -105,7 +107,8 @@ This project used substantial OpenAI Codex assistance for implementation, tests,
 
 - Leader identity and profiles are entered, and all four supplied WeMakeDevs usernames are recorded.
 - Public GitHub, deployed application, and verified unlisted YouTube links are entered. The video is under three minutes.
+- Update the published YouTube description's leader sentence to `Team leader: Harshita Nagesh.`; it still named Induj at the latest check. The prepared description is corrected.
 - The AWS answer matches the deployed services; Bedrock is explicitly disabled.
-- Keep the factual leader contribution and AI-assistance disclosure. Add other members' contributions only when their actual work is supplied.
+- Harshita's confirmed role is team lead. Keep Induj's factual contribution under his own entry and retain the AI-assistance disclosure. Add other deliverables only when actual work is supplied.
 - Leave unsupplied optional blog/resume/member fields blank; do not copy explanatory placeholders into the form.
 - Review and submit the event form. **The form itself has not been submitted.**

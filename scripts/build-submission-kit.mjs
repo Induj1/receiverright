@@ -27,7 +27,7 @@ await writeFile(path.join(root,'docs/evidence/video-verification.json'),JSON.str
 
 const welcome=`# ReceiveRight — final submission kit
 
-Prepared for AWS × WeMakeDevs First Commit 2026, **Ship it**. Team **Bro code**; leader **Induj Gupta**, WeMakeDevs **indujgupta**.
+Prepared for AWS × WeMakeDevs First Commit 2026, **Ship it**. Team **Bro code**; leader **Harshita Nagesh**, WeMakeDevs **hashh**.
 
 - [Live application](https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com)
 - [Public source](https://github.com/Induj1/receiverright)
@@ -40,7 +40,9 @@ Prepared for AWS × WeMakeDevs First Commit 2026, **Ship it**. Team **Bro code**
 
 ${watchUrl?'YouTube: '+watchUrl:'The video is finished locally. An authorized unlisted YouTube upload is waiting for account sign-in; the required watch URL is not yet available.'}
 
-Induj's GitHub, LinkedIn, confirmed username, and publicly accessible resume are entered. Harshita, Rayyan, and Laavanya's supplied usernames are entered. Their unsupplied optional profile/resume/contribution fields should remain blank until real information is provided. The event form has **not** been submitted. Do not copy explanatory placeholders into form fields.
+The published YouTube description still needs its leader sentence changed to **Team leader: Harshita Nagesh.** The prepared description in docs/VIDEO-PUBLISHING.md is corrected; Induj remains the uploader.
+
+Harshita's leader username, GitHub, and LinkedIn are entered; her confirmed contribution is her team-lead role. Induj's profiles, resume, and implementation/deployment contribution remain under his own member entry. All four supplied WeMakeDevs usernames are recorded. Unsupplied optional profile/resume/contribution fields should remain blank until real information is provided. The event form has **not** been submitted. Do not copy explanatory placeholders into form fields.
 
 ## Verified state
 

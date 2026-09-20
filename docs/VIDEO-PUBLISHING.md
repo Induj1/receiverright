@@ -6,6 +6,8 @@ The video contains actual browser interactions with synthetic data and generated
 
 **Published by Induj:** [Watch the unlisted demo](https://youtu.be/DAq-7V6UqVM). Verified on 20 September 2026: the page opens and playback starts while signed out, the visibility label is Unlisted, and the player displays 2:46. The visible content matches the finished demo. YouTube closed captions were not yet available at verification; the optional SRT file is included in the kit.
 
+**Description correction still needed:** the published description was checked after the team update and still says `Team leader: Induj Gupta.` Change that sentence to `Team leader: Harshita Nagesh.` in YouTube Studio. The prepared description below is corrected; the video uploader remains Induj.
+
 ## Suggested title
 
 ReceiveRight | One Delivery, One Shared Record | AWS First Commit 2026
@@ -20,7 +22,7 @@ https://ds687e8jj0.execute-api.ap-south-1.amazonaws.com
 Public source code and setup:
 https://github.com/Induj1/receiverright
 
-Built by Bro code for First Commit 2026 by AWS × WeMakeDevs, Ship it track. Team leader: Induj Gupta.
+Built by Bro code for First Commit 2026 by AWS × WeMakeDevs, Ship it track. Team leader: Harshita Nagesh.
 
 AWS services exercised: API Gateway HTTP API, Lambda, DynamoDB, private versioned S3, and Textract AnalyzeExpense. DynamoDB transactions preserve saved states; S3 object versions preserve attached evidence. Summaries use deterministic templates. Bedrock is disabled and CloudFront is not deployed.
 
@@ -34,4 +36,4 @@ The video uses actual recorded app interactions with still-frame narration holds
 
 Induj uploaded the video using his signed-in Edge session. The verified watch link has been added to the submission answers, README, PDF, and final kit. The local video is 166.023 seconds; YouTube displays 2:46. The SRT can be added through YouTube Studio as an optional accessibility improvement.
 
-Induj has confirmed he is the leader, with username `indujgupta`; his GitHub, LinkedIn, and public resume are recorded. Other members' unsupplied optional profile, resume, and contribution fields can remain blank. Optional blog fields stay blank unless actually published. The supplied Builder Center article is an unpublished draft. The event form has not been submitted.
+The latest team details identify **Harshita Nagesh (`hashh`) as leader**, with GitHub `https://github.com/hash066` and LinkedIn `https://www.linkedin.com/in/harshita-nagesh`. Induj (`indujgupta`) remains a team member and the video uploader; his profiles, resume, and contribution stay under his own entry. Unsupplied optional fields remain blank. The Builder Center article is an unpublished draft, and the event form has not been submitted.
