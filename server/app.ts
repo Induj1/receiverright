@@ -40,6 +40,14 @@ export function createApp(options:{store?:Store;providers?:Providers;serveStatic
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', process.env.AWS_LAMBDA_FUNCTION_NAME ? 1 : false);
+  // The Lambda adapter can supply an already-consumed Buffer. Express 5's
+  // body-parser skips finished streams, so parse that bounded JSON explicitly.
+  app.use((req,_res,next)=>{
+    if(!Buffer.isBuffer(req.body) || !req.is('application/json')) return next();
+    if(req.body.length>512*1024) return next(new HttpError(413,'This request is too large.'));
+    try {req.body=req.body.length ? JSON.parse(req.body.toString('utf8')) : {};next();}
+    catch {next(new HttpError(400,'Request body must be valid JSON.'));}
+  });
   app.use(helmet({contentSecurityPolicy:{directives:{'connect-src':["'self'",'https://*.amazonaws.com'],'img-src':["'self'",'data:','blob:','https://*.amazonaws.com'],'frame-src':["'self'",'blob:'] }},referrerPolicy:{policy:'no-referrer'}}));
   app.use('/api',(_req,res,next)=> {res.set('Cache-Control','no-store');next();});
   app.use('/api',rateLimit({windowMs:60_000,limit:240,standardHeaders:'draft-7',legacyHeaders:false,message:{error:'Too many requests. Please wait a minute.'}}));

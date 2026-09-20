@@ -2,6 +2,7 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import request from 'supertest';
+import serverlessExpress from '@codegenie/serverless-express';
 import {afterEach,beforeEach,describe,expect,it} from 'vitest';
 import {createApp} from '../server/app.js';
 import {FileStore} from '../server/store.js';
@@ -32,6 +33,13 @@ describe('receiving API with isolated durable local storage',()=>{
     await request(app).get(`/api/cases/${original.id}`).set('Authorization',`Bearer ${second.body.token}`).expect(404);
     expect((await request(app).get('/api/cases').set('Authorization',`Bearer ${second.body.token}`).expect(200)).body.cases).toEqual([]);
     await request(app).get(`/api/cases/${original.id}`).expect(401);
+  });
+  it('parses JSON passed through the actual API Gateway HTTP adapter',async()=>{
+    const handler=serverlessExpress({app});
+    const body=JSON.stringify({name:'Lambda adapter test'});
+    const response=await handler({version:'2.0',routeKey:'$default',rawPath:'/api/sessions',rawQueryString:'',headers:{'content-type':'application/json','content-length':String(Buffer.byteLength(body))},requestContext:{accountId:'synthetic',apiId:'synthetic',domainName:'example.invalid',domainPrefix:'example',http:{method:'POST',path:'/api/sessions',protocol:'HTTP/1.1',sourceIp:'127.0.0.1',userAgent:'synthetic-test'},requestId:'synthetic',routeKey:'$default',stage:'$default',timeEpoch:Date.now()},body,isBase64Encoded:false},{getRemainingTimeInMillis:()=>30000} as never,()=>{}) as unknown as {statusCode:number;body:string};
+    expect(response.statusCode).toBe(201);
+    expect(JSON.parse(response.body)).toMatchObject({name:'Lambda adapter test',isDemo:false});
   });
   it('completes receiver verification, supplier decisions and acknowledged closure',async()=>{
     const record=await confirmed();
