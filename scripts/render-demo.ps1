@@ -84,10 +84,12 @@ try {
         $progressId = 'receiverright-speech-' + [System.Guid]::NewGuid().ToString('N')
         $subscription = Register-ObjectEvent -InputObject $synth -EventName SpeakProgress -SourceIdentifier $progressId
         try {
-            $synth.SetOutputToWaveFile($wavePath)
+            # Explicit PCM format keeps SAPI's word-event audio clock aligned with the written WAV.
+            $speechFormat = [System.Speech.AudioFormat.SpeechAudioFormatInfo]::new(16000, [System.Speech.AudioFormat.AudioBitsPerSample]::Sixteen, [System.Speech.AudioFormat.AudioChannel]::Mono)
+            $synth.SetOutputToWaveFile($wavePath, $speechFormat)
             $synth.Speak([string]$shot.narration)
             $synth.SetOutputToNull()
-            $words = @(Get-Event -SourceIdentifier $progressId -ErrorAction SilentlyContinue | ForEach-Object {
+            $words = @(Get-Event -SourceIdentifier $progressId -ErrorAction SilentlyContinue | Sort-Object EventIdentifier | ForEach-Object {
                 [PSCustomObject]@{ start=$_.SourceEventArgs.AudioPosition.TotalSeconds; position=$_.SourceEventArgs.CharacterPosition; length=$_.SourceEventArgs.CharacterCount }
             })
         } finally {
@@ -159,6 +161,7 @@ $subtitlePath = [System.IO.Path]::ChangeExtension($outputFile, '.srt')
 $subtitles = [System.Collections.Generic.List[string]]::new()
 $timeline = 0.0
 $cueNumber = 0
+$lastCueEnd = 0.0
 foreach ($clip in $clips) {
     if (-not $clip.words.Count) { throw 'Narration word timestamps were unavailable; subtitle generation requires Windows SpeakProgress events.' }
     $groupStart = 0
@@ -172,6 +175,8 @@ foreach ($clip in $clips) {
             $cueNumber++
             $start = $timeline + [double]$clip.words[$groupStart].start
             $end = if ($lastWord) { $timeline + $clip.speechSeconds } else { $timeline + [double]$clip.words[$wordIndex + 1].start }
+            if ($start -lt $lastCueEnd -or $end -le $start -or $end -gt $actualDuration) { throw "Invalid subtitle clock at cue $cueNumber. Review speech timestamps before publication." }
+            $lastCueEnd = $end
             $subtitles.Add([string]$cueNumber)
             $subtitles.Add((Subtitle-Time $start) + ' --> ' + (Subtitle-Time $end))
             $subtitles.Add((Wrap-Caption $text 46))
