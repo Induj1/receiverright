@@ -210,7 +210,7 @@ def build(output: Path, site_url: str, test_count: int, youtube_url: str = ''):
               MARGIN, 152, CONTENT, 9.2, INK, leading=14)
     video_status = (f'<link href="{escape(youtube_url)}" color="#1F5C48">Watch on YouTube</link>.'
                     if youtube_url else 'YouTube upload pending.')
-    paragraph(pdf, '<b>Bro code</b>  Induj Gupta (team lead), Harshita Nagesh, Rayyan Shaikh, Laavanya Gupta.<br/>'
+    paragraph(pdf, '<b>Bro code</b>  Harshita Nagesh (team lead), Induj Gupta, Rayyan Shaikh, Laavanya Gupta.<br/>'
               '<b>Demo</b>  2:46 edited browser interactions; narration holds disclosed. ' + video_status,
               MARGIN, 127, CONTENT, 8.5, MUTED, leading=12.5)
     paragraph(pdf, 'OpenAI Codex substantially assisted implementation, tests, interface work, documentation and review. '
